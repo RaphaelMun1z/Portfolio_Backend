@@ -3,17 +3,17 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Language extends Model {
+  class Tool extends Model {
     static associate(models) {
-
+      
     }
   }
-  Language.init({
+  Tool.init({
     name: DataTypes.STRING,
     proficiency: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'Language',
+    modelName: 'Tool',
   });
-  return Language;
+  return Tool;
 };
