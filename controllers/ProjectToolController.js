@@ -28,73 +28,53 @@ const insertProjectTool = async (req, res) => {
 }
 
 const getAllProjectTools = async (req, res) => {
-    const tools = await Tool.findAll()
+    const projectTools = await ProjectTool.findAll()
 
-    res.status(200).json(tools)
+    res.status(200).json(projectTools)
 }
 
 const getProjectToolById = async (req, res) => {
     const { id } = req.params
 
-    const tool = await Tool.findByPk(id)
+    const projectTool = await ProjectTool.findByPk(id)
 
-    res.status(200).json(tool)
+    res.status(200).json(projectTool)
 }
 
-const updateProjectTool = async (req, res) => {
-    const { id } = req.params
-    const { name, proficiency } = req.body
+const getProjectToolByToolId = async (req, res) => {
+    const { toolId } = req.params
 
-    try {
-        // Verify if tool ID was passed
-        if (isNaN(id)) {
-            return res.status(400).json({ error: "O identificador da ferramenta é obrigatório!" })
-        }
+    const projectTools = await ProjectTool.findAll({ where: { toolId } })
 
-        // Verify if tool exists
-        const toolExists = await Tool.findByPk(id)
-        if (!toolExists) {
-            return res.status(422).json({ error: "Essa ferramenta não existe!" })
-        }
+    res.status(200).json(projectTools)
+}
 
-        if (!name && !proficiency) {
-            return res.status(200).json({ message: "Nenhuma alteração realizada na ferramenta!" })
-        }
+const getProjectToolByProjectId = async (req, res) => {
+    const { toolId } = req.params
 
-        if (name) {
-            toolExists.name = name
-        }
+    const projectTools = await ProjectTool.findAll({ where: { toolId } })
 
-        if (proficiency && proficiency >= 0 && proficiency <= 100) {
-            toolExists.proficiency = proficiency
-        }
-
-        // Update tool
-        await toolExists.save()
-        return res.status(200).json({ message: "Ferramenta atualizada com sucesso!" })
-    } catch (error) {
-        return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
-    }
+    res.status(200).json(projectTools)
 }
 
 const deleteProjectTool = async (req, res) => {
     const { id } = req.params
 
     try {
-        // Verify if tool ID was passed
+        // Verify if project tool ID was passed
         if (isNaN(id)) {
-            return res.status(400).json({ error: "O identificador da ferramenta é obrigatório!" })
+            return res.status(400).json({ error: "O identificador da ferramenta do projeto é obrigatório!" })
         }
 
-        // Verify if tool exists
-        const toolExists = await Tool.findByPk(id)
-        if (!toolExists) {
-            return res.status(422).json({ error: "Essa ferramenta não existe!" })
+        // Verify if project tool exists
+        const projectToolExists = await ProjectTool.findByPk(id)
+        if (!projectToolExists) {
+            return res.status(422).json({ error: "Essa ferramenta não está inclusa nesse projeto!" })
         }
 
         // Delete tool
-        await Tool.destroy({ where: { id } })
-        return res.status(200).json({ message: "Ferramenta deletada com sucesso!" })
+        await ProjectTool.destroy({ where: { id } })
+        return res.status(200).json({ message: "Ferramenta do projeto deletada com sucesso!" })
     } catch (error) {
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }
@@ -104,6 +84,5 @@ module.exports = {
     insertProjectTool,
     getAllProjectTools,
     getProjectToolById,
-    updateProjectTool,
     deleteProjectTool,
 }

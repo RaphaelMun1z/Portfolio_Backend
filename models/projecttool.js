@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'ProjectTool',
+    tableName: 'Projects_Tools'
   });
   return ProjectTool;
 };
