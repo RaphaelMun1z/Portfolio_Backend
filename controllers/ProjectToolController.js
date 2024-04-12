@@ -1,6 +1,6 @@
 const { ProjectTool, Tool } = require('../models')
 
-/* const insertProjectTool = async (req, res) => {
+const insertProjectTool = async (req, res) => {
     const { toolId, projectId } = req.body
 
     if (!toolId || toolId === "" || isNaN(toolId)) {
@@ -29,8 +29,12 @@ const { ProjectTool, Tool } = require('../models')
 
 const getAllProjectTools = async (req, res) => {
     const projectTools = await ProjectTool.findAll({
-        include: Tool
+        include: [{
+            model: Tool,
+            attributes: ['id', 'name', 'proficiency']
+        }]
     })
+
 
     res.status(200).json(projectTools)
 }
@@ -80,7 +84,7 @@ const deleteProjectTool = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }
-} */
+}
 
 module.exports = {
     insertProjectTool,

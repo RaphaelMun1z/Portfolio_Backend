@@ -3,18 +3,17 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Language extends Model {
+  class Database extends Model {
     static associate(models) {
-
+     
     }
   }
-  Language.init({
+  Database.init({
     name: DataTypes.STRING,
     proficiency: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'Language',
+    modelName: 'Database',
   });
-  return Language;
+  return Database;
 };
-
