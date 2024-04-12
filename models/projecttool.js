@@ -12,8 +12,19 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   ProjectTool.init({
-    toolId: DataTypes.INTEGER,
-    projectId: DataTypes.INTEGER
+    toolId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Tools',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+    },
+    projectId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    }
   }, {
     sequelize,
     modelName: 'ProjectTool',

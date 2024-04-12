@@ -6,7 +6,8 @@ const {
     insertProjectTool,
     getAllProjectTools,
     getProjectToolById,
-    updateProjectTool,
+    getProjectToolByToolId,
+    getProjectToolByProjectId,
     deleteProjectTool,
 } = require("../controllers/ProjectToolController")
 
@@ -14,7 +15,8 @@ const {
 router.post("/", insertProjectTool)
 router.get("/", getAllProjectTools)
 router.get("/:id", getProjectToolById)
-router.put("/:id", updateProjectTool)
+router.get("/tool/:toolId", getProjectToolByToolId)
+router.get("/project/:projectId", getProjectToolByProjectId)
 router.delete("/:id", deleteProjectTool)
 
 module.exports = router
