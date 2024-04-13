@@ -5,7 +5,10 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Language extends Model {
     static associate(models) {
-
+      Language.hasMany(models.Framework, {
+        foreignKey: 'languageId',
+        onDelete: 'CASCADE',
+      })
     }
   }
   Language.init({
