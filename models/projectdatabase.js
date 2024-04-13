@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'databaseId',
         onDelete: 'CASCADE',
       })
+      ProjectDatabase.belongsTo(models.Project, {
+        foreignKey: 'projectId',
+        onDelete: 'CASCADE',
+      })
     }
   }
   ProjectDatabase.init({

@@ -1,4 +1,15 @@
-const { Project, ProjectHost, ProjectTool, Tool, ProjectDatabase, Database } = require('../models')
+const {
+    Project,
+    ProjectHost,
+    ProjectTool,
+    Tool,
+    ProjectDatabase,
+    Database,
+    ProjectFrontend,
+    ProjectBackend,
+    Language,
+    Framework
+} = require('../models')
 
 const insertProject = async (req, res) => {
     const { name, description, stack, isHosted, URL, usedTools, toolsIdArray, usedDatabase, databaseId } = req.body
@@ -109,7 +120,7 @@ const getAllProjects = async (req, res) => {
             attributes: ['id'],
             include: [{
                 model: Tool,
-                attributes: ['name']
+                attributes: ['id', 'name']
             }],
             required: false
         },
@@ -118,7 +129,31 @@ const getAllProjects = async (req, res) => {
             attributes: ['id'],
             include: [{
                 model: Database,
-                attributes: ['name']
+                attributes: ['id', 'name']
+            }],
+            required: false
+        },
+        {
+            model: ProjectFrontend,
+            attributes: ['id'],
+            include: [{
+                model: Language,
+                attributes: ['id', 'name']
+            }, {
+                model: Framework,
+                attributes: ['id', 'name']
+            }],
+            required: false
+        },
+        {
+            model: ProjectBackend,
+            attributes: ['id'],
+            include: [{
+                model: Language,
+                attributes: ['id', 'name']
+            }, {
+                model: Framework,
+                attributes: ['id', 'name']
             }],
             required: false
         }]

@@ -17,6 +17,14 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'projectId',
         onDelete: 'CASCADE',
       });
+      Project.hasOne(models.ProjectFrontend, {
+        foreignKey: 'projectId',
+        onDelete: 'CASCADE',
+      });
+      Project.hasOne(models.ProjectBackend, {
+        foreignKey: 'projectId',
+        onDelete: 'CASCADE',
+      });
     }
   }
   Project.init({

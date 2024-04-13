@@ -4,6 +4,10 @@ const projectToolController = require('./ProjectToolController')
 const databaseController = require('./DatabaseController')
 const projectDatabaseController = require('./ProjectDatabaseController')
 const projectHostController = require('./ProjectHostController')
+const projectFrontendController = require('./ProjectFrontendController')
+const projectBackendController = require('./ProjectBackendController')
+const frameworksController = require('./ProjectController')
+const projectsController = require('./ProjectController')
 
 module.exports = {
     languages: languagesController,
@@ -12,4 +16,8 @@ module.exports = {
     databases: databaseController,
     projectsDatabase: projectDatabaseController,
     projectsHost: projectHostController,
+    projects: projectsController,
+    frameworks: frameworksController,
+    projectsFrontend: projectFrontendController,
+    projectsBackend: projectBackendController,
 }
