@@ -1,7 +1,7 @@
-const { Project, ProjectHost } = require('../models')
+const { Project, ProjectHost, ProjectTool, Tool, ProjectDatabase, Database } = require('../models')
 
 const insertProject = async (req, res) => {
-    const { name, description, stack, isHosted, usedTools, usedDatabase } = req.body
+    const { name, description, stack, isHosted, URL, usedTools, toolsIdArray, usedDatabase, databaseId } = req.body
 
     if (!name || name === "") {
         return res.status(400).json({ error: "O nome do projeto é obrigatório!" })
@@ -15,16 +15,55 @@ const insertProject = async (req, res) => {
         return res.status(400).json({ error: "A stack do projeto é obrigatória!" })
     }
 
-    if (isHosted === null || isHosted === "") {
+    switch (stack) {
+        case "Frontend":
+            break;
+        case "Backend":
+            break;
+        case "Fullstack":
+            break;
+        default:
+            return res.status(400).json({ error: "Valor inválido para a stack!" })
+            break;
+    }
+
+    // Host
+    if (isHosted === null || isHosted === undefined || isHosted === "") {
         return res.status(400).json({ error: "A situação da hospedagem do projeto é obrigatória!" })
     }
 
-    if (usedTools === null || usedTools === "") {
+    if (isHosted) {
+        if (!URL || URL === "") {
+            return res.status(400).json({ error: "A URL da hospedagem é obrigatória!" })
+        }
+    }
+
+    // Tools
+    if (usedTools === null || usedTools === undefined || usedTools === "") {
         return res.status(400).json({ error: "A situação do uso de ferramentas no projeto é obrigatória!" })
     }
 
-    if (usedDatabase === null || usedDatabase === "") {
+    if (usedTools) {
+        if (!Array.isArray(toolsIdArray) || !toolsIdArray || toolsIdArray === "") {
+            return res.status(400).json({ error: "O identificador da(s) ferramenta(s) é obrigatório!" })
+        }
+
+        toolsIdArray.map((toolId) => {
+            if (isNaN(toolId)) {
+                return res.status(400).json({ error: "O identificador da(s) ferramenta(s) precisa ser válido!" })
+            }
+        })
+    }
+
+    // Database
+    if (usedDatabase === null || usedDatabase === undefined || usedDatabase === "") {
         return res.status(400).json({ error: "A situação do uso de banco de dados para o projeto é obrigatória!" })
+    }
+
+    if (usedDatabase) {
+        if (!databaseId || isNaN(databaseId) || databaseId === "") {
+            return res.status(400).json({ error: "O identificador do banco de dados é obrigatório!" })
+        }
     }
 
     try {
@@ -36,6 +75,22 @@ const insertProject = async (req, res) => {
 
         // Create project
         const newProject = await Project.create({ name, description, stack, isHosted, usedTools, usedDatabase })
+        const projectId = newProject.id;
+
+        if (isHosted) {
+            await ProjectHost.create({ URL, projectId })
+        }
+
+        if (usedTools) {
+            toolsIdArray.map(async (toolId) => {
+                await ProjectTool.create({ toolId, projectId })
+            })
+        }
+
+        if (usedDatabase) {
+            await ProjectDatabase.create({ databaseId, projectId })
+        }
+
         return res.status(200).json({ message: "Projeto cadastrado com sucesso!", newProject })
     } catch (error) {
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
@@ -47,6 +102,24 @@ const getAllProjects = async (req, res) => {
         include: [{
             model: ProjectHost,
             attributes: ['id', 'URL'],
+            required: false
+        },
+        {
+            model: ProjectTool,
+            attributes: ['id'],
+            include: [{
+                model: Tool,
+                attributes: ['name']
+            }],
+            required: false
+        },
+        {
+            model: ProjectDatabase,
+            attributes: ['id'],
+            include: [{
+                model: Database,
+                attributes: ['name']
+            }],
             required: false
         }]
     })
