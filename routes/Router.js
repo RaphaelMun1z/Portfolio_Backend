@@ -7,6 +7,7 @@ router.use("/api/projects-tools", require("./ProjectToolRoutes"))
 router.use("/api/databases", require("./DatabaseRoutes"))
 router.use("/api/projects-database", require("./ProjectDatabaseRoutes"))
 router.use("/api/projects-host", require("./ProjectHostRoutes"))
+router.use("/api/projects", require("./ProjectRoutes"))
 
 router.get("/", (req, res) => {
     res.send("API Working!")

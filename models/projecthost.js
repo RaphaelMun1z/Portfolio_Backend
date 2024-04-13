@@ -5,12 +5,23 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class ProjectHost extends Model {
     static associate(models) {
-     
+      ProjectHost.belongsTo(models.Project, {
+        foreignKey: 'projectId',
+        onDelete: 'CASCADE',
+      })
     }
   }
   ProjectHost.init({
     URL: DataTypes.STRING,
-    projectId: DataTypes.INTEGER
+    projectId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Projects',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+    },
   }, {
     sequelize,
     modelName: 'ProjectHost',
