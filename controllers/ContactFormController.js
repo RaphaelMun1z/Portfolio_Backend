@@ -1,33 +1,44 @@
-const { ContactForm } = require('../models')
+const { ContactForm, FormSubject } = require('../models')
 
 const insertContactForm = async (req, res) => {
-    const { personName, subject } = req.body
+    const { personName, subjectId, message } = req.body
 
     if (!personName || personName === "") {
         return res.status(400).json({ error: "O nome é obrigatório!" })
     }
 
-    if (!subject || subject === "") {
-        return res.status(400).json({ error: "O assunto é obrigatório!" })
+    if (!subjectId || isNaN(subjectId) || subjectId === "") {
+        return res.status(400).json({ error: "O identificador do assunto é obrigatório!" })
+    }
+
+    if (!message || message === "") {
+        return res.status(400).json({ error: "A mensagem é obrigatória!" })
     }
 
     try {
         // Verify if contact form already exists
-        const contactFormAlreadyExists = await ContactForm.findOne({ where: { personName, subject } })
+        const contactFormAlreadyExists = await ContactForm.findOne({ where: { personName, subjectId, message } })
         if (contactFormAlreadyExists) {
             return res.status(409).json({ error: "Esse formulário já existe!" })
         }
 
         // Create contact form
-        const newContactForm = await ContactForm.create({ personName, subject })
+        const newContactForm = await ContactForm.create({ personName, subjectId, message })
         return res.status(200).json({ message: "Formulário cadastrado com sucesso!", newContactForm })
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }
 }
 
 const getAllContactForms = async (req, res) => {
-    const contactForms = await ContactForm.findAll()
+    const contactForms = await ContactForm.findAll({
+        include: {
+            model: FormSubject,
+            attributes: ['id', 'subject'],
+            required: false
+        },
+    })
 
     res.status(200).json(contactForms)
 }
@@ -42,7 +53,7 @@ const getContactFormById = async (req, res) => {
 
 const updateContactForm = async (req, res) => {
     const { id } = req.params
-    const { personName, subject } = req.body
+    const { personName, subjectId, message } = req.body
 
     try {
         // Verify if contact form ID was passed
@@ -56,7 +67,7 @@ const updateContactForm = async (req, res) => {
             return res.status(422).json({ error: "Esse formulário não existe!" })
         }
 
-        if (!personName && !subject) {
+        if (!personName && !subjectId && !message) {
             return res.status(200).json({ message: "Nenhuma alteração realizada na linguagem!" })
         }
 
@@ -64,8 +75,12 @@ const updateContactForm = async (req, res) => {
             contactFormExists.personName = personName
         }
 
-        if (subject) {
-            contactFormExists.subject = subject
+        if (subjectId) {
+            contactFormExists.subjectId = subjectId
+        }
+
+        if (message) {
+            contactFormExists.message = message
         }
 
         // Update contact form

@@ -1,39 +1,34 @@
 'use strict';
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.createTable('Contact_Forms', {
+    await queryInterface.createTable('Form_Subjects', {
       id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
+        allowNull: false,
         autoIncrement: true,
-        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.INTEGER
       },
-      personName: {
+      subject: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      subjectId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      message: {
-        type: Sequelize.STRING,
+      formType: {
+        type: Sequelize.ENUM,
+        values: ['Doubt', 'Budget'],
         allowNull: false,
       },
       createdAt: {
-        type: Sequelize.DATE,
         allowNull: false,
+        type: Sequelize.DATE
       },
       updatedAt: {
-        type: Sequelize.DATE,
         allowNull: false,
-      },
+        type: Sequelize.DATE
+      }
     });
   },
-
   async down(queryInterface, Sequelize) {
-    return queryInterface.dropTable('Contact_Forms');
+    await queryInterface.dropTable('Form_Subjects');
   }
 };
