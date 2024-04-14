@@ -14,6 +14,7 @@ router.use("/api/projects", require("./ProjectRoutes"))
 router.use("/api/interpersonal-skills", require("./InterpersonalSkillRoutes"))
 router.use("/api/contact-forms", require("./ContactFormRoutes"))
 router.use("/api/faqs", require("./FaqRoutes"))
+router.use("/api/form-subjects", require("./FormSubjectRoutes"))
 
 router.get("/", (req, res) => {
     res.send("API Working!")
