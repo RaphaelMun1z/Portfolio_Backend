@@ -5,6 +5,7 @@ const router = express.Router()
 const {
     insertProject,
     getAllProjects,
+    getAllReducedProjects,
     getProjectById,
     updateProject,
     deleteProject,
@@ -13,6 +14,7 @@ const {
 // Routes
 router.post("/", insertProject)
 router.get("/", getAllProjects)
+router.get("/reduced", getAllReducedProjects)
 router.get("/:id", getProjectById)
 router.put("/:id", updateProject)
 router.delete("/:id", deleteProject)

@@ -13,6 +13,18 @@ const {
 
 const insertProject = async (req, res) => {
     const { name, description, stack, isHosted, URL, usedTools, toolsIdArray, usedDatabase, databaseId } = req.body
+    const frontend = {
+        languageId: req.body.fLanguageId,
+        frameworkId: req.body.fFrameworkId,
+        repository: req.body.fRepository,
+        projectId: req.body.fProjectId
+    }
+    const backend = {
+        languageId: req.body.bLanguageId,
+        frameworkId: req.body.bFrameworkId,
+        repository: req.body.bRepository,
+        projectId: req.body.bProjectId
+    }
 
     if (!name || name === "") {
         return res.status(400).json({ error: "O nome do projeto é obrigatório!" })
@@ -28,10 +40,105 @@ const insertProject = async (req, res) => {
 
     switch (stack) {
         case "Frontend":
+            if (!frontend.languageId || isNaN(frontend.languageId) || frontend.languageId === "") {
+                return res.status(400).json({ error: "O identificador da linguagem utilizada no frontend é obrigatório!" })
+            }
+
+            if (!frontend.frameworkId || isNaN(frontend.frameworkId) || frontend.frameworkId === "") {
+                return res.status(400).json({ error: "O identificador do framework utilizado no frontend é obrigatório!" })
+            }
+
+            if (!frontend.repository || frontend.repository === "") {
+                return res.status(400).json({ error: "O repositório do projeto frontend é obrigatório!" })
+            }
+
+            // Verify if language exists
+            const frontendLanguageExists = await Language.findByPk(frontend.languageId)
+            if (!frontendLanguageExists) {
+                return res.status(422).json({ error: "Essa linguagem não existe!" })
+            }
+
+            // Verify if framework already exists
+            const frontendFrameworkExists = await Framework.findByPk(frontend.frameworkId)
+            if (!frontendFrameworkExists) {
+                return res.status(409).json({ error: "Esse framework não existe!" })
+            }
             break;
+
         case "Backend":
+            if (!backend.languageId || isNaN(backend.languageId) || backend.languageId === "") {
+                return res.status(400).json({ error: "O identificador da linguagem utilizada no backend é obrigatório!" })
+            }
+
+            if (!backend.frameworkId || isNaN(backend.frameworkId) || backend.frameworkId === "") {
+                return res.status(400).json({ error: "O identificador do framework utilizado no backend é obrigatório!" })
+            }
+
+            if (!backend.repository || backend.repository === "") {
+                return res.status(400).json({ error: "O repositório do projeto backend é obrigatório!" })
+            }
+
+            // Verify if language exists
+            const backendLanguageExists = await Language.findByPk(backend.languageId)
+            if (!backendLanguageExists) {
+                return res.status(422).json({ error: "Essa linguagem não existe!" })
+            }
+
+            // Verify if framework already exists
+            const backendFrameworkExists = await Framework.findByPk(backend.frameworkId)
+            if (!backendFrameworkExists) {
+                return res.status(409).json({ error: "Esse framework não existe!" })
+            }
             break;
+
         case "Fullstack":
+            if (!frontend.languageId || isNaN(frontend.languageId) || frontend.languageId === "") {
+                return res.status(400).json({ error: "O identificador da linguagem utilizada no frontend é obrigatório!" })
+            }
+
+            if (!frontend.frameworkId || isNaN(frontend.frameworkId) || frontend.frameworkId === "") {
+                return res.status(400).json({ error: "O identificador do framework utilizado no frontend é obrigatório!" })
+            }
+
+            if (!frontend.repository || frontend.repository === "") {
+                return res.status(400).json({ error: "O repositório do projeto frontend é obrigatório!" })
+            }
+
+            if (!backend.languageId || isNaN(backend.languageId) || backend.languageId === "") {
+                return res.status(400).json({ error: "O identificador da linguagem utilizada no backend é obrigatório!" })
+            }
+
+            if (!backend.frameworkId || isNaN(backend.frameworkId) || backend.frameworkId === "") {
+                return res.status(400).json({ error: "O identificador do framework utilizado no backend é obrigatório!" })
+            }
+
+            if (!backend.repository || backend.repository === "") {
+                return res.status(400).json({ error: "O repositório do projeto backend é obrigatório!" })
+            }
+
+            // Verify if language exists
+            const fullstack_frontendLanguageExists = await Language.findByPk(frontend.languageId)
+            if (!fullstack_frontendLanguageExists) {
+                return res.status(422).json({ error: "Essa linguagem não existe!" })
+            }
+
+            // Verify if framework already exists
+            const fullstack_frontendFrameworkExists = await Framework.findByPk(frontend.frameworkId)
+            if (!fullstack_frontendFrameworkExists) {
+                return res.status(409).json({ error: "Esse framework não existe!" })
+            }
+
+            // Verify if language exists
+            const fullstack_backendLanguageExists = await Language.findByPk(backend.languageId)
+            if (!fullstack_backendLanguageExists) {
+                return res.status(422).json({ error: "Essa linguagem não existe!" })
+            }
+
+            // Verify if framework already exists
+            const fullstack_backendFrameworkExists = await Framework.findByPk(backend.frameworkId)
+            if (!fullstack_backendFrameworkExists) {
+                return res.status(409).json({ error: "Esse framework não existe!" })
+            }
             break;
         default:
             return res.status(400).json({ error: "Valor inválido para a stack!" })
@@ -102,6 +209,21 @@ const insertProject = async (req, res) => {
             await ProjectDatabase.create({ databaseId, projectId })
         }
 
+        switch (stack) {
+            case "Frontend":
+                await ProjectFrontend.create({ languageId: frontend.languageId, frameworkId: frontend.frameworkId, repository: frontend.repository, projectId: newProject.id })
+                break;
+            case "Backend":
+                await ProjectBackend.create({ languageId: backend.languageId, frameworkId: backend.frameworkId, repository: backend.repository, projectId: newProject.id })
+                break;
+            case "Fullstack":
+                await ProjectFrontend.create({ languageId: frontend.languageId, frameworkId: frontend.frameworkId, repository: frontend.repository, projectId: newProject.id })
+                await ProjectBackend.create({ languageId: backend.languageId, frameworkId: backend.frameworkId, repository: backend.repository, projectId: newProject.id })
+                break;
+            default:
+                break;
+        }
+
         return res.status(200).json({ message: "Projeto cadastrado com sucesso!", newProject })
     } catch (error) {
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
@@ -162,10 +284,64 @@ const getAllProjects = async (req, res) => {
     res.status(200).json(projects)
 }
 
+const getAllReducedProjects = async (req, res) => {
+    const reducedProjects = await Project.findAll()
+
+    res.status(200).json(reducedProjects)
+}
+
 const getProjectById = async (req, res) => {
     const { id } = req.params
 
-    const project = await Project.findByPk(id)
+    const project = await Project.findByPk(id, {
+        include: [{
+            model: ProjectHost,
+            attributes: ['id', 'URL'],
+            required: false
+        },
+        {
+            model: ProjectTool,
+            attributes: ['id'],
+            include: [{
+                model: Tool,
+                attributes: ['id', 'name']
+            }],
+            required: false
+        },
+        {
+            model: ProjectDatabase,
+            attributes: ['id'],
+            include: [{
+                model: Database,
+                attributes: ['id', 'name']
+            }],
+            required: false
+        },
+        {
+            model: ProjectFrontend,
+            attributes: ['id'],
+            include: [{
+                model: Language,
+                attributes: ['id', 'name']
+            }, {
+                model: Framework,
+                attributes: ['id', 'name']
+            }],
+            required: false
+        },
+        {
+            model: ProjectBackend,
+            attributes: ['id'],
+            include: [{
+                model: Language,
+                attributes: ['id', 'name']
+            }, {
+                model: Framework,
+                attributes: ['id', 'name']
+            }],
+            required: false
+        }]
+    })
 
     res.status(200).json(project)
 }
@@ -248,6 +424,7 @@ const deleteProject = async (req, res) => {
 module.exports = {
     insertProject,
     getAllProjects,
+    getAllReducedProjects,
     getProjectById,
     updateProject,
     deleteProject,

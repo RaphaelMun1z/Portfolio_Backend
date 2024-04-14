@@ -26,11 +26,17 @@ const insertFramework = async (req, res) => {
             return res.status(409).json({ error: "Esse framework já existe!" })
         }
 
+        // Verify if language exists
+        const languageExists = await Language.findByPk(languageId)
+        if (!languageExists) {
+            return res.status(422).json({ error: "Essa linguagem não existe!" })
+        }
+
         // Create framework
         const newFramework = await Framework.create({ name, languageId, proficiency })
         return res.status(200).json({ message: "Framework cadastrado com sucesso!", newFramework })
     } catch (error) {
-        console.error("Erro ao verificar se o framework já existe:", error);
+        console.error( error);
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }
 }

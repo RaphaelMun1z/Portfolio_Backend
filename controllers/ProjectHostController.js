@@ -1,4 +1,4 @@
-const { ProjectHost } = require('../models')
+const { ProjectHost, Project } = require('../models')
 
 const insertProjectHost = async (req, res) => {
     const { URL, projectId } = req.body
@@ -13,9 +13,15 @@ const insertProjectHost = async (req, res) => {
 
     try {
         // Verify if project host already exists
-        const projectHostAlreadyExists = await ProjectHost.findOne({ where: { URL, projectId } })
+        const projectHostAlreadyExists = await ProjectHost.findOne({ where: { projectId } })
         if (projectHostAlreadyExists) {
-            return res.status(409).json({ error: "Essa já é a atual hospedagem!" })
+            return res.status(409).json({ error: "Esse projeto já possui uma hospedagem!" })
+        }
+
+        // Verify if project exists
+        const projectExists = await Project.findByPk(projectId)
+        if (!projectExists) {
+            return res.status(409).json({ error: "Esse projeto não existe!" })
         }
 
         // Create project host
