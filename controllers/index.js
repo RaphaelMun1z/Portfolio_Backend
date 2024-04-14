@@ -9,6 +9,7 @@ const projectBackendController = require('./ProjectBackendController')
 const frameworksController = require('./ProjectController')
 const projectsController = require('./ProjectController')
 const interpersonalSkillController = require('./InterpersonalSkillController')
+const contactFormController = require('./ContactFormController')
 
 module.exports = {
     languages: languagesController,
@@ -21,5 +22,6 @@ module.exports = {
     frameworks: frameworksController,
     projectsFrontend: projectFrontendController,
     projectsBackend: projectBackendController,
-    interpersonalSkills: interpersonalSkillController
+    interpersonalSkills: interpersonalSkillController,
+    contactForms: contactFormController,
 }
