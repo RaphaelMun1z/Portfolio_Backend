@@ -14,7 +14,7 @@ const faqController = require('./FaqController')
 const formSubjectController = require('./FormSubjectController')
 
 module.exports = {
-    languages: languagesController,
+    Language: languagesController,
     tools: toolsController,
     projectsTools: projectToolController,
     databases: databaseController,

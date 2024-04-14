@@ -1,6 +1,9 @@
 const express = require("express")
 const router = express.Router()
 
+// Middlewares
+const verifyToken = require("../helpers/verify-token")
+
 // Controller
 const {
     insertInterpersonalSkill,
@@ -11,10 +14,10 @@ const {
 } = require("../controllers/InterpersonalSkillController")
 
 // Routes
-router.post("/", insertInterpersonalSkill)
+router.post("/", verifyToken, insertInterpersonalSkill)
 router.get("/", getAllInterpersonalSkills)
 router.get("/:id", getInterpersonalSkillById)
-router.put("/:id", updateInterpersonalSkill)
-router.delete("/:id", deleteInterpersonalSkill)
+router.put("/:id", verifyToken, updateInterpersonalSkill)
+router.delete("/:id", verifyToken, deleteInterpersonalSkill)
 
 module.exports = router

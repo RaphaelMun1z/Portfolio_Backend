@@ -1,6 +1,9 @@
 const express = require("express")
 const router = express.Router()
 
+// Middlewares
+const verifyToken = require("../helpers/verify-token")
+
 // Controller
 const {
     insertFormSubject,
@@ -11,10 +14,10 @@ const {
 } = require("../controllers/FormSubjectController")
 
 // Routes
-router.post("/", insertFormSubject)
+router.post("/", verifyToken, insertFormSubject)
 router.get("/", getAllFormSubjects)
 router.get("/:id", getFormSubjectById)
-router.put("/:id", updateFormSubject)
-router.delete("/:id", deleteFormSubject)
+router.put("/:id", verifyToken, updateFormSubject)
+router.delete("/:id", verifyToken, deleteFormSubject)
 
 module.exports = router

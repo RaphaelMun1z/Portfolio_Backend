@@ -11,10 +11,12 @@
   "author": "RaphaelMuniz <raphaelmunizvarela@gmail.com> (https://www.linkedin.com/in/raphael-muniz-7119911a2/)",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.9.4",
     "sequelize": "^6.37.2"
   },

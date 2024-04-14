@@ -1,6 +1,9 @@
 const express = require("express")
 const router = express.Router()
 
+// Middlewares
+const verifyToken = require("../helpers/verify-token")
+
 // Controller
 const {
     insertProjectHost,
@@ -11,10 +14,10 @@ const {
 } = require("../controllers/ProjectHostController")
 
 // Routes
-router.post("/", insertProjectHost)
+router.post("/", verifyToken, insertProjectHost)
 router.get("/", getAllProjectsHost)
 router.get("/:id", getProjectHostById)
-router.put("/:id", updateProjectHost)
-router.delete("/:id", deleteProjectHost)
+router.put("/:id", verifyToken, updateProjectHost)
+router.delete("/:id", verifyToken, deleteProjectHost)
 
 module.exports = router

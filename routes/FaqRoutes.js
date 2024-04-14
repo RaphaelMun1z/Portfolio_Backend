@@ -1,6 +1,9 @@
 const express = require("express")
 const router = express.Router()
 
+// Middlewares
+const verifyToken = require("../helpers/verify-token")
+
 // Controller
 const {
     insertFaq,
@@ -11,10 +14,10 @@ const {
 } = require("../controllers/FaqController")
 
 // Routes
-router.post("/", insertFaq)
+router.post("/", verifyToken, insertFaq)
 router.get("/", getAllFaqs)
 router.get("/:id", getFaqById)
-router.put("/:id", updateFaq)
-router.delete("/:id", deleteFaq)
+router.put("/:id", verifyToken, updateFaq)
+router.delete("/:id", verifyToken, deleteFaq)
 
 module.exports = router

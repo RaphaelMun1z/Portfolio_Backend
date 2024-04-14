@@ -1,6 +1,9 @@
 const express = require("express")
 const router = express.Router()
 
+// Middlewares
+const verifyToken = require("../helpers/verify-token")
+
 // Controller
 const {
     insertTool,
@@ -11,10 +14,10 @@ const {
 } = require("../controllers/ToolController")
 
 // Routes
-router.post("/", insertTool)
+router.post("/", verifyToken, insertTool)
 router.get("/", getAllTools)
 router.get("/:id", getToolById)
-router.put("/:id", updateTool)
-router.delete("/:id", deleteTool)
+router.put("/:id", verifyToken, updateTool)
+router.delete("/:id", verifyToken, deleteTool)
 
 module.exports = router

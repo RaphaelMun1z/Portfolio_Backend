@@ -1,6 +1,9 @@
 const express = require("express")
 const router = express.Router()
 
+// Middlewares
+const verifyToken = require("../helpers/verify-token")
+
 // Controller
 const {
     insertContactForm,
@@ -12,9 +15,9 @@ const {
 
 // Routes
 router.post("/", insertContactForm)
-router.get("/", getAllContactForms)
-router.get("/:id", getContactFormById)
-router.put("/:id", updateContactForm)
-router.delete("/:id", deleteContactForm)
+router.get("/", verifyToken, getAllContactForms)
+router.get("/:id", verifyToken, getContactFormById)
+router.put("/:id", verifyToken, updateContactForm)
+router.delete("/:id", verifyToken, deleteContactForm)
 
 module.exports = router
