@@ -65,6 +65,12 @@ const updateTool = async (req, res) => {
         }
 
         if (name) {
+            // Verify if tool already exists
+            const toolAlreadyExists = await Tool.findOne({ where: { name } })
+            if (toolAlreadyExists) {
+                return res.status(409).json({ error: "Essa ferramenta já existe!" })
+            }
+
             toolExists.name = name
         }
 

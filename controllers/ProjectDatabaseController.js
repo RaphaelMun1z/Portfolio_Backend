@@ -1,4 +1,4 @@
-const { ProjectDatabase, Database } = require('../models')
+const { ProjectDatabase, Database, Project } = require('../models')
 
 const insertProjectDatabase = async (req, res) => {
     const { databaseId, projectId } = req.body
@@ -16,6 +16,18 @@ const insertProjectDatabase = async (req, res) => {
         const projectDatabaseAlreadyExists = await ProjectDatabase.findOne({ where: { databaseId, projectId } })
         if (projectDatabaseAlreadyExists) {
             return res.status(409).json({ error: "Esse banco de dados já foi incluso nesse projeto!" })
+        }
+
+        // Verify if database exists
+        const databaseExists = await Database.findByPk(databaseId)
+        if (!databaseExists) {
+            return res.status(409).json({ error: "Esse banco de dados não existe!" })
+        }
+
+        // Verify if project exists
+        const projectExists = await Project.findByPk(projectId)
+        if (!projectExists) {
+            return res.status(409).json({ error: "Esse projeto não existe!" })
         }
 
         // Create project database
@@ -41,7 +53,12 @@ const getAllProjectsDatabase = async (req, res) => {
 const getProjectDatabaseById = async (req, res) => {
     const { id } = req.params
 
-    const projectDatabase = await ProjectDatabase.findByPk(id)
+    const projectDatabase = await ProjectDatabase.findByPk(id, {
+        include: [{
+            model: Database,
+            attributes: ['id', 'name', 'proficiency']
+        }]
+    })
 
     res.status(200).json(projectDatabase)
 }
@@ -49,7 +66,13 @@ const getProjectDatabaseById = async (req, res) => {
 const getProjectDatabaseByDatabaseId = async (req, res) => {
     const { databaseId } = req.params
 
-    const projectsDatabase = await ProjectDatabase.findAll({ where: { databaseId } })
+    const projectsDatabase = await ProjectDatabase.findAll({
+        where: { databaseId },
+        include: [{
+            model: Database,
+            attributes: ['id', 'name', 'proficiency']
+        }]
+    });
 
     res.status(200).json(projectsDatabase)
 }
@@ -57,7 +80,13 @@ const getProjectDatabaseByDatabaseId = async (req, res) => {
 const getProjectDatabaseByProjectId = async (req, res) => {
     const { projectId } = req.params
 
-    const projectsDatabase = await ProjectDatabase.findAll({ where: { projectId } })
+    const projectsDatabase = await ProjectDatabase.findAll({
+        where: { projectId },
+        include: [{
+            model: Database,
+            attributes: ['id', 'name', 'proficiency']
+        }]
+    })
 
     res.status(200).json(projectsDatabase)
 }

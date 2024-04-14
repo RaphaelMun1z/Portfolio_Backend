@@ -65,6 +65,12 @@ const updateDatabase = async (req, res) => {
         }
 
         if (name) {
+            // Verify if database already exists
+            const databaseAlreadyExists = await Database.findOne({ where: { name } })
+            if (databaseAlreadyExists) {
+                return res.status(409).json({ error: "Esse banco de dados já existe!" })
+            }
+
             databaseExists.name = name
         }
 

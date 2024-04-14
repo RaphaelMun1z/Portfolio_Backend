@@ -65,6 +65,12 @@ const updateLanguage = async (req, res) => {
         }
 
         if (name) {
+            // Verify if language already exists
+            const languageAlreadyExists = await Language.findOne({ where: { name } })
+            if (languageAlreadyExists) {
+                return res.status(409).json({ error: "Essa linguagem já existe!" })
+            }
+
             languageExists.name = name
         }
 

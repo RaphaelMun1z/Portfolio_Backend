@@ -1,4 +1,4 @@
-const { ProjectTool, Tool } = require('../models')
+const { ProjectTool, Tool, Project } = require('../models')
 
 const insertProjectTool = async (req, res) => {
     const { toolId, projectId } = req.body
@@ -16,6 +16,18 @@ const insertProjectTool = async (req, res) => {
         const projectToolAlreadyExists = await ProjectTool.findOne({ where: { toolId, projectId } })
         if (projectToolAlreadyExists) {
             return res.status(409).json({ error: "Essa ferramenta já foi inclusa nesse projeto!" })
+        }
+
+        // Verify if tool exists
+        const toolExists = await Tool.findByPk(toolId)
+        if (!toolExists) {
+            return res.status(409).json({ error: "Essa ferramenta não existe!" })
+        }
+
+        // Verify if project exists
+        const projectExists = await Project.findByPk(projectId)
+        if (!projectExists) {
+            return res.status(409).json({ error: "Esse projeto não existe!" })
         }
 
         // Create project tool
