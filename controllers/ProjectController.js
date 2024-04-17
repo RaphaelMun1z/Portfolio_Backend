@@ -325,7 +325,11 @@ const getProjectById = async (req, res) => {
                 attributes: ['id', 'name']
             }, {
                 model: Framework,
-                attributes: ['id', 'name']
+                attributes: ['id', 'name'],
+                include: {
+                    model: Language,
+                    attributes: ['id', 'name']
+                },
             }],
             required: false
         },
@@ -337,7 +341,11 @@ const getProjectById = async (req, res) => {
                 attributes: ['id', 'name']
             }, {
                 model: Framework,
-                attributes: ['id', 'name']
+                attributes: ['id', 'name'],
+                include: {
+                    model: Language,
+                    attributes: ['id', 'name']
+                },
             }],
             required: false
         }]
