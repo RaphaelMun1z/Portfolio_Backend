@@ -5,7 +5,10 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Database extends Model {
     static associate(models) {
-
+      Database.hasMany(models.ProjectDatabase, {
+        foreignKey: 'databaseId',
+        onDelete: 'CASCADE',
+      })
     }
   }
   Database.init({

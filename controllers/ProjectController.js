@@ -10,6 +10,7 @@ const {
     Language,
     Framework
 } = require('../models')
+const { Op } = require('sequelize');
 
 const insertProject = async (req, res) => {
     const { name, description, stack, isHosted, URL, usedTools, toolsIdArray, usedDatabase, databaseId } = req.body
@@ -231,58 +232,92 @@ const insertProject = async (req, res) => {
 }
 
 const getAllProjects = async (req, res) => {
-    const projects = await Project.findAll({
-        include: [{
-            model: ProjectHost,
-            attributes: ['id', 'URL'],
-            required: false
-        },
-        {
-            model: ProjectTool,
-            attributes: ['id'],
-            include: [{
-                model: Tool,
-                attributes: ['id', 'name']
-            }],
-            required: false
-        },
-        {
-            model: ProjectDatabase,
-            attributes: ['id'],
-            include: [{
-                model: Database,
-                attributes: ['id', 'name']
-            }],
-            required: false
-        },
-        {
-            model: ProjectFrontend,
-            attributes: ['id'],
-            include: [{
-                model: Language,
-                attributes: ['id', 'name']
-            }, {
-                model: Framework,
-                attributes: ['id', 'name']
-            }],
-            required: false
-        },
-        {
-            model: ProjectBackend,
-            attributes: ['id'],
-            include: [{
-                model: Language,
-                attributes: ['id', 'name']
-            }, {
-                model: Framework,
-                attributes: ['id', 'name']
-            }],
-            required: false
-        }]
-    })
+    const { projectName, languageId, frameworkId, databaseId } = req.query;
 
-    res.status(200).json(projects)
-}
+    // Objeto para armazenar os critérios de pesquisa
+    const whereClause = {};
+
+    // Adicionando critérios à cláusula WHERE conforme necessário
+    if (projectName) {
+        whereClause.name = { [Op.like]: `%${projectName}%` };
+    }
+
+    if (languageId) {
+        whereClause[Op.or] = [
+            { '$ProjectFrontend.Language.id$': { [Op.eq]: languageId } },
+            { '$ProjectBackend.Language.id$': { [Op.eq]: languageId } }
+        ];
+    }
+
+    if (frameworkId) {
+        whereClause[Op.or] = [
+            { '$ProjectFrontend.Framework.id$': { [Op.eq]: frameworkId } },
+            { '$ProjectBackend.Framework.id$': { [Op.eq]: frameworkId } }
+        ];
+    }
+
+    if (databaseId) {
+        whereClause['$ProjectDatabase.Database.id$'] = { [Op.eq]: databaseId };
+    }
+
+    try {
+        const projects = await Project.findAll({
+            where: whereClause,
+            include: [{
+                model: ProjectHost,
+                attributes: ['id', 'URL'],
+                required: false
+            },
+            {
+                model: ProjectTool,
+                attributes: ['id'],
+                include: [{
+                    model: Tool,
+                    attributes: ['id', 'name']
+                }],
+                required: false
+            },
+            {
+                model: ProjectDatabase,
+                attributes: ['id'],
+                include: [{
+                    model: Database,
+                    attributes: ['id', 'name']
+                }],
+                required: false
+            },
+            {
+                model: ProjectFrontend,
+                attributes: ['id'],
+                include: [{
+                    model: Language,
+                    attributes: ['id', 'name']
+                }, {
+                    model: Framework,
+                    attributes: ['id', 'name']
+                }],
+                required: false
+            },
+            {
+                model: ProjectBackend,
+                attributes: ['id'],
+                include: [{
+                    model: Language,
+                    attributes: ['id', 'name']
+                }, {
+                    model: Framework,
+                    attributes: ['id', 'name']
+                }],
+                required: false
+            }]
+        });
+
+        res.status(200).json(projects);
+    } catch (error) {
+        console.error('Erro ao recuperar projetos:', error);
+        res.status(500).json({ error: 'Erro ao recuperar projetos' });
+    }
+};
 
 const getAllReducedProjects = async (req, res) => {
     const reducedProjects = await Project.findAll()
