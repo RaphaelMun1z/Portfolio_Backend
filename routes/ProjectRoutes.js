@@ -18,7 +18,7 @@ const {
 router.post("/", verifyToken, insertProject)
 router.get("/", getAllProjects)
 router.get("/reduced", getAllReducedProjects)
-router.get("/:id", verifyToken, getProjectById)
+router.get("/:id", getProjectById)
 router.put("/:id", verifyToken, updateProject)
 router.delete("/:id", verifyToken, deleteProject)
 
