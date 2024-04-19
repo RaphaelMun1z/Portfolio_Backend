@@ -232,32 +232,52 @@ const insertProject = async (req, res) => {
 }
 
 const getAllProjects = async (req, res) => {
-    const { projectName, languageId, frameworkId, databaseId } = req.query;
+    const { projectName, projectStack, databaseId, languagesId, frameworksId } = req.query;
 
-    // Objeto para armazenar os critérios de pesquisa
     const whereClause = {};
 
-    // Adicionando critérios à cláusula WHERE conforme necessário
     if (projectName) {
         whereClause.name = { [Op.like]: `%${projectName}%` };
     }
 
-    if (languageId) {
-        whereClause[Op.or] = [
-            { '$ProjectFrontend.Language.id$': { [Op.eq]: languageId } },
-            { '$ProjectBackend.Language.id$': { [Op.eq]: languageId } }
-        ];
-    }
-
-    if (frameworkId) {
-        whereClause[Op.or] = [
-            { '$ProjectFrontend.Framework.id$': { [Op.eq]: frameworkId } },
-            { '$ProjectBackend.Framework.id$': { [Op.eq]: frameworkId } }
-        ];
+    if (projectStack) {
+        whereClause.stack = projectStack
     }
 
     if (databaseId) {
         whereClause['$ProjectDatabase.Database.id$'] = { [Op.eq]: databaseId };
+    }
+
+    const filterClauses = []
+
+    if (languagesId && languagesId.length > 0) {
+        const languagesIdArray = languagesId.split(',').map(id => parseInt(id.trim(), 10));
+
+        const languageWhereClauses = languagesIdArray.map(languageId => ({
+            [Op.or]: [
+                { '$ProjectFrontend.Language.id$': { [Op.eq]: languageId } },
+                { '$ProjectBackend.Language.id$': { [Op.eq]: languageId } }
+            ]
+        }));
+
+        filterClauses.push({ [Op.and]: languageWhereClauses });
+    }
+
+    if (frameworksId && frameworksId.length > 0) {
+        const frameworksIdArray = frameworksId.split(',').map(id => parseInt(id.trim(), 10));
+
+        const frameworkWhereClauses = frameworksIdArray.map(frameworkId => ({
+            [Op.or]: [
+                { '$ProjectFrontend.Framework.id$': { [Op.eq]: frameworkId } },
+                { '$ProjectBackend.Framework.id$': { [Op.eq]: frameworkId } }
+            ]
+        }));
+
+        filterClauses.push({ [Op.and]: frameworkWhereClauses });
+    }
+
+    if (filterClauses.length > 0) {
+        whereClause[Op.and] = filterClauses;
     }
 
     try {
