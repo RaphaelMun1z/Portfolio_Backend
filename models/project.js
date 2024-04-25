@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'projectId',
         onDelete: 'CASCADE',
       });
-    }
+    } 
   }
   Project.init({
     name: DataTypes.STRING,
