@@ -18,6 +18,11 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
       },
+      type: {
+        type: Sequelize.ENUM,
+        values: ['Web', 'Desktop', 'Mobile', 'EmbeddedProgramming'],
+        allowNull: false,
+      },
       stack: {
         type: Sequelize.ENUM,
         values: ['Frontend', 'Backend', 'Fullstack'],

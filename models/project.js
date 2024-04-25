@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
   Project.init({
     name: DataTypes.STRING,
     description: DataTypes.STRING,
+    type: {
+      type: DataTypes.ENUM('Web', 'Desktop', 'Mobile', 'EmbeddedProgramming'),
+      allowNull: false
+    },
     stack: {
       type: DataTypes.ENUM('Frontend', 'Backend', 'Fullstack'),
       allowNull: false

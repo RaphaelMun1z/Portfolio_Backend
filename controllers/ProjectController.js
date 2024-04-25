@@ -13,7 +13,8 @@ const {
 const { Op } = require('sequelize');
 
 const insertProject = async (req, res) => {
-    const { name, description, stack, isHosted, URL, usedTools, toolsIdArray, usedDatabase, databaseId } = req.body
+    const { name, description, type, stack, isHosted, URL, usedTools, toolsIdArray, usedDatabase, databaseId } = req.body
+
     const frontend = {
         languageId: req.body.fLanguageId,
         frameworkId: req.body.fFrameworkId,
@@ -146,6 +147,14 @@ const insertProject = async (req, res) => {
             break;
     }
 
+    if (!type || type === "" || type === null) {
+        return res.status(400).json({ error: "O tipo de projeto é obrigatório!" })
+    }
+
+    if (type !== "Web" && type !== "Desktop" && type !== "Mobile" && type !== "EmbeddedProgramming") {
+        return res.status(400).json({ error: "Valor inválido para o tipo!" })
+    }
+
     // Host
     if (isHosted === null || isHosted === undefined || isHosted === "") {
         return res.status(400).json({ error: "A situação da hospedagem do projeto é obrigatória!" })
@@ -193,7 +202,7 @@ const insertProject = async (req, res) => {
         }
 
         // Create project
-        const newProject = await Project.create({ name, description, stack, isHosted, usedTools, usedDatabase })
+        const newProject = await Project.create({ name, description, type, stack, isHosted, usedTools, usedDatabase })
         const projectId = newProject.id;
 
         if (isHosted) {
@@ -227,6 +236,9 @@ const insertProject = async (req, res) => {
 
         return res.status(200).json({ message: "Projeto cadastrado com sucesso!", newProject })
     } catch (error) {
+        console.log("=====================================================")
+        console.log(error)
+        console.log("=====================================================")
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }
 }
@@ -282,7 +294,7 @@ const getAllProjects = async (req, res) => {
 
     try {
         const projects = await Project.findAll({
-            where: whereClause,
+            where: Object.keys(whereClause).length > 0 ? whereClause : null,
             include: [{
                 model: ProjectHost,
                 attributes: ['id', 'URL'],
