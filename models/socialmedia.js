@@ -3,18 +3,18 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class System extends Model {
+  class SocialMedia extends Model {
     static associate(models) {
 
     }
   }
-  System.init({
+  SocialMedia.init({
     instagram: DataTypes.STRING,
     github: DataTypes.STRING,
     linkedin: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'System',
+    modelName: 'SocialMedia',
   });
-  return System;
+  return SocialMedia;
 };

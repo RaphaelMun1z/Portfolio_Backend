@@ -12,9 +12,10 @@ const interpersonalSkillController = require('./InterpersonalSkillController')
 const contactFormController = require('./ContactFormController')
 const faqController = require('./FaqController')
 const formSubjectController = require('./FormSubjectController')
+const socialMediaController = require('./SocialMediaController')
 
 module.exports = {
-    Language: languagesController,
+    languages: languagesController,
     tools: toolsController,
     projectsTools: projectToolController,
     databases: databaseController,
@@ -28,4 +29,5 @@ module.exports = {
     contactForms: contactFormController,
     faqs: faqController,
     formSubjects: formSubjectController,
+    socialMedia: socialMediaController,
 }
