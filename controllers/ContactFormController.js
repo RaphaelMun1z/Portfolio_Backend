@@ -1,10 +1,14 @@
 const { ContactForm, FormSubject } = require('../models')
 
 const insertContactForm = async (req, res) => {
-    const { personName, subjectId, message } = req.body
+    const { personName, email, subjectId, message } = req.body
 
     if (!personName || personName === "") {
         return res.status(400).json({ error: "O nome é obrigatório!" })
+    }
+
+    if (!email || email === "") {
+        return res.status(400).json({ error: "O e-mail é obrigatório!" })
     }
 
     if (!subjectId || isNaN(subjectId) || subjectId === "") {
@@ -17,13 +21,13 @@ const insertContactForm = async (req, res) => {
 
     try {
         // Verify if contact form already exists
-        const contactFormAlreadyExists = await ContactForm.findOne({ where: { personName, subjectId, message } })
+        const contactFormAlreadyExists = await ContactForm.findOne({ where: { email, subjectId, message } })
         if (contactFormAlreadyExists) {
             return res.status(409).json({ error: "Esse formulário já existe!" })
         }
 
         // Create contact form
-        const newContactForm = await ContactForm.create({ personName, subjectId, message })
+        const newContactForm = await ContactForm.create({ personName, email, subjectId, message })
         return res.status(200).json({ message: "Formulário cadastrado com sucesso!", newContactForm })
     } catch (error) {
         console.log(error)

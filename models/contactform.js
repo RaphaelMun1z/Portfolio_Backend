@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   ContactForm.init({
     personName: DataTypes.STRING,
+    email: DataTypes.STRING,
     subjectId: {
       type: DataTypes.INTEGER,
       allowNull: false,
