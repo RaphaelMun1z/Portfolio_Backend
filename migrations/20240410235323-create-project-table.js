@@ -18,6 +18,10 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
       },
+      bannerImage: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       type: {
         type: Sequelize.ENUM,
         values: ['Web', 'Desktop', 'Mobile', 'EmbeddedProgramming'],

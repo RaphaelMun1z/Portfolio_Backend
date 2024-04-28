@@ -3,6 +3,7 @@ const router = express.Router()
 
 // Middlewares
 const verifyToken = require("../helpers/verify-token")
+const { imageUpload } = require("../middlewares/imageUpload")
 
 // Controller
 const {
@@ -15,7 +16,7 @@ const {
 } = require("../controllers/ProjectController")
 
 // Routes
-router.post("/", verifyToken, insertProject)
+router.post("/", verifyToken, imageUpload.single("bannerImage"), insertProject)
 router.get("/", getAllProjects)
 router.get("/reduced", getAllReducedProjects)
 router.get("/:id", getProjectById)

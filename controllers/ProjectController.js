@@ -21,6 +21,7 @@ const insertProject = async (req, res) => {
         repository: req.body.fRepository,
         projectId: req.body.fProjectId
     }
+
     const backend = {
         languageId: req.body.bLanguageId,
         frameworkId: req.body.bFrameworkId,
@@ -34,6 +35,12 @@ const insertProject = async (req, res) => {
 
     if (!description || description === "") {
         return res.status(400).json({ error: "A descrição do projeto é obrigatória!" })
+    }
+
+    if (req.file) {
+        bannerImage = req.file.filename
+    } else {
+        return res.status(400).json({ error: "O banner do projeto é obrigatório!" })
     }
 
     if (!stack || stack === "") {
@@ -202,7 +209,7 @@ const insertProject = async (req, res) => {
         }
 
         // Create project
-        const newProject = await Project.create({ name, description, type, stack, isHosted, usedTools, usedDatabase })
+        const newProject = await Project.create({ name, description, bannerImage, type, stack, isHosted, usedTools, usedDatabase })
         const projectId = newProject.id;
 
         if (isHosted) {
@@ -211,7 +218,7 @@ const insertProject = async (req, res) => {
 
         if (usedTools) {
             toolsIdArray.map(async (toolId) => {
-                await ProjectTool.create({ toolId, projectId })
+                await ProjectTool.create({ toolId, projectId }) 
             })
         }
 
@@ -236,9 +243,6 @@ const insertProject = async (req, res) => {
 
         return res.status(200).json({ message: "Projeto cadastrado com sucesso!", newProject })
     } catch (error) {
-        console.log("=====================================================")
-        console.log(error)
-        console.log("=====================================================")
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }
 }
