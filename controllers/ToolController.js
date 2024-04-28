@@ -1,4 +1,4 @@
-const { Tool } = require('../models')
+const { Tool, ProjectTool, sequelize } = require('../models')
 
 const insertTool = async (req, res) => {
     const { name, proficiency } = req.body
@@ -33,7 +33,25 @@ const insertTool = async (req, res) => {
 const getAllTools = async (req, res) => {
     const tools = await Tool.findAll()
 
-    res.status(200).json(tools)
+    const toolUsageCounts = await ProjectTool.findAll({
+        attributes: ['toolId', [sequelize.fn('COUNT', 'toolId'), 'usageCount']],
+        group: ['toolId']
+    });
+
+    const totalUsageMap = {};
+
+    toolUsageCounts.forEach(usage => {
+        const toolId = usage.toolId;
+        const count = usage.usageCount;
+        totalUsageMap[toolId] = count;
+    });
+
+    const toolsWithTotalUsageCount = tools.map(tool => ({
+        ...tool.toJSON(),
+        usageCount: totalUsageMap[tool.id] || 0,
+    }));
+
+    res.status(200).json(toolsWithTotalUsageCount)
 }
 
 const getToolById = async (req, res) => {

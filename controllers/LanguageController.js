@@ -1,4 +1,4 @@
-const { Language } = require('../models')
+const { Language, ProjectFrontend, ProjectBackend, sequelize } = require('../models')
 
 const insertLanguage = async (req, res) => {
     const { name, proficiency } = req.body
@@ -33,7 +33,44 @@ const insertLanguage = async (req, res) => {
 const getAllLanguages = async (req, res) => {
     const languages = await Language.findAll()
 
-    res.status(200).json(languages)
+    const frontendUsageCounts = await ProjectFrontend.findAll({
+        attributes: ['languageId', [sequelize.fn('COUNT', 'languageId'), 'frontendUsageCount']],
+        group: ['languageId']
+    });
+
+    const backendUsageCounts = await ProjectBackend.findAll({
+        attributes: ['languageId', [sequelize.fn('COUNT', 'languageId'), 'backendUsageCount']],
+        group: ['languageId']
+    });
+
+    const totalUsageMap = {};
+
+    frontendUsageCounts.forEach(usage => {
+        const languageId = usage.languageId;
+        const count = usage.frontendUsageCount;
+        if (totalUsageMap[languageId]) {
+            totalUsageMap[languageId] += count;
+        } else {
+            totalUsageMap[languageId] = count;
+        }
+    });
+
+    backendUsageCounts.forEach(usage => {
+        const languageId = usage.languageId;
+        const count = usage.backendUsageCount;
+        if (totalUsageMap[languageId]) {
+            totalUsageMap[languageId] += count;
+        } else {
+            totalUsageMap[languageId] = count;
+        }
+    });
+
+    const languagesWithTotalUsageCount = languages.map(language => ({
+        ...language.toJSON(),
+        usageCount: totalUsageMap[language.id] || 0,
+    }));
+
+    res.status(200).json(languagesWithTotalUsageCount)
 }
 
 const getLanguageById = async (req, res) => {

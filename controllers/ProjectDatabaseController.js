@@ -114,6 +114,25 @@ const deleteProjectDatabase = async (req, res) => {
     }
 }
 
+const countDatabaseUsage = async (req, res) => {
+    const { databaseId } = req.params;
+
+    try {
+        // Verify if database ID was passed
+        if (isNaN(databaseId)) {
+            return res.status(400).json({ error: "O identificador do banco de dados é obrigatório!" })
+        }
+
+        const count = await ProjectDatabase.count({
+            where: { databaseId }
+        });
+
+        res.status(200).json(count)
+    } catch (error) {
+        return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
+    }
+}
+
 module.exports = {
     insertProjectDatabase,
     getAllProjectsDatabase,
@@ -121,4 +140,5 @@ module.exports = {
     getProjectDatabaseByDatabaseId,
     getProjectDatabaseByProjectId,
     deleteProjectDatabase,
+    countDatabaseUsage,
 }

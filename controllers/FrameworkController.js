@@ -1,4 +1,4 @@
-const { Framework, Language } = require('../models')
+const { Framework, Language, ProjectFrontend, ProjectBackend, sequelize } = require('../models')
 
 const insertFramework = async (req, res) => {
     const { name, languageId, proficiency } = req.body
@@ -36,7 +36,7 @@ const insertFramework = async (req, res) => {
         const newFramework = await Framework.create({ name, languageId, proficiency })
         return res.status(200).json({ message: "Framework cadastrado com sucesso!", newFramework })
     } catch (error) {
-        console.error( error);
+        console.error(error);
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }
 }
@@ -50,7 +50,44 @@ const getAllFrameworks = async (req, res) => {
         },
     })
 
-    res.status(200).json(frameworks)
+    const frontendUsageCounts = await ProjectFrontend.findAll({
+        attributes: ['frameworkId', [sequelize.fn('COUNT', 'frameworkId'), 'frontendUsageCount']],
+        group: ['frameworkId']
+    });
+
+    const backendUsageCounts = await ProjectBackend.findAll({
+        attributes: ['frameworkId', [sequelize.fn('COUNT', 'frameworkId'), 'backendUsageCount']],
+        group: ['frameworkId']
+    });
+
+    const totalUsageMap = {};
+
+    frontendUsageCounts.forEach(usage => {
+        const frameworkId = usage.frameworkId;
+        const count = usage.frontendUsageCount;
+        if (totalUsageMap[frameworkId]) {
+            totalUsageMap[frameworkId] += count;
+        } else {
+            totalUsageMap[frameworkId] = count;
+        }
+    });
+
+    backendUsageCounts.forEach(usage => {
+        const frameworkId = usage.frameworkId;
+        const count = usage.backendUsageCount;
+        if (totalUsageMap[frameworkId]) {
+            totalUsageMap[frameworkId] += count;
+        } else {
+            totalUsageMap[frameworkId] = count;
+        }
+    });
+
+    const frameworksWithTotalUsageCount = frameworks.map(framework => ({
+        ...framework.toJSON(),
+        usageCount: totalUsageMap[framework.id] || 0,
+    }));
+
+    res.status(200).json(frameworksWithTotalUsageCount)
 }
 
 const getFrameworkById = async (req, res) => {

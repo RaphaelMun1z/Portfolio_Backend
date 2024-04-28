@@ -1,4 +1,4 @@
-const { Database } = require('../models')
+const { Database, ProjectDatabase, sequelize } = require('../models')
 
 const insertDatabase = async (req, res) => {
     const { name, proficiency } = req.body
@@ -33,7 +33,22 @@ const insertDatabase = async (req, res) => {
 const getAllDatabases = async (req, res) => {
     const databases = await Database.findAll()
 
-    res.status(200).json(databases)
+    const usageCounts = await ProjectDatabase.findAll({
+        attributes: ['databaseId', [sequelize.fn('COUNT', 'databaseId'), 'usageCount']],
+        group: ['databaseId']
+    });
+
+    const databaseUsageMap = {};
+    usageCounts.forEach(usage => {
+        databaseUsageMap[usage.databaseId] = usage.usageCount;
+    });
+
+    const databasesWithUsageCount = databases.map(database => ({
+        ...database.toJSON(),
+        usageCount: databaseUsageMap[database.id] || 0,
+    }));
+
+    res.status(200).json(databasesWithUsageCount)
 }
 
 const getDatabaseById = async (req, res) => {
