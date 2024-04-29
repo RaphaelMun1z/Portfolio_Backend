@@ -7,10 +7,13 @@ const imageStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         let folder = ""
 
-        if (req.baseUrl.includes("projects")) {
+        console.log(req.baseUrl)
+        if (req.baseUrl === "/api/projects") {
             folder = "projectsBanner"
-        } else if (req.baseUrl.includes("images")) {
-            folder = "images"
+            console.log("A")
+        } else if (req.baseUrl === "/api/projects-image") {
+            folder = "image"
+            console.log("B")
         }
 
         cb(null, `uploads/${folder}/`)

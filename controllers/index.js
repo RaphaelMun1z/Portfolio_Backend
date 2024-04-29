@@ -13,6 +13,7 @@ const contactFormController = require('./ContactFormController')
 const faqController = require('./FaqController')
 const formSubjectController = require('./FormSubjectController')
 const socialMediaController = require('./SocialMediaController')
+const projectImageController = require('./ProjectImageController')
 
 module.exports = {
     languages: languagesController,
@@ -30,4 +31,5 @@ module.exports = {
     faqs: faqController,
     formSubjects: formSubjectController,
     socialMedia: socialMediaController,
+    projectImage: projectImageController,
 }

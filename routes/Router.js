@@ -18,6 +18,7 @@ router.use("/api/form-subjects", require("./FormSubjectRoutes"))
 router.use("/api/adm", require("./AdmRoutes"))
 router.use("/api/logs", require("./LogRoutes"))
 router.use("/api/social-media", require("./SocialMediaRoutes"))
+router.use("/api/projects-image", require("./ProjectImageRoutes"))
 
 router.get("/", (req, res) => {
     res.send("API Working!")

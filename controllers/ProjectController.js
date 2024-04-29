@@ -167,7 +167,7 @@ const insertProject = async (req, res) => {
         return res.status(400).json({ error: "A situação da hospedagem do projeto é obrigatória!" })
     }
 
-    if (isHosted) {
+    if (isHosted === true) {
         if (!URL || URL === "") {
             return res.status(400).json({ error: "A URL da hospedagem é obrigatória!" })
         }
@@ -178,7 +178,7 @@ const insertProject = async (req, res) => {
         return res.status(400).json({ error: "A situação do uso de ferramentas no projeto é obrigatória!" })
     }
 
-    if (usedTools) {
+    if (usedTools === true) {
         if (!Array.isArray(toolsIdArray) || !toolsIdArray || toolsIdArray === "") {
             return res.status(400).json({ error: "O identificador da(s) ferramenta(s) é obrigatório!" })
         }
@@ -195,7 +195,7 @@ const insertProject = async (req, res) => {
         return res.status(400).json({ error: "A situação do uso de banco de dados para o projeto é obrigatória!" })
     }
 
-    if (usedDatabase) {
+    if (usedDatabase === true) {
         if (!databaseId || isNaN(databaseId) || databaseId === "") {
             return res.status(400).json({ error: "O identificador do banco de dados é obrigatório!" })
         }
@@ -212,17 +212,17 @@ const insertProject = async (req, res) => {
         const newProject = await Project.create({ name, description, bannerImage, type, stack, isHosted, usedTools, usedDatabase })
         const projectId = newProject.id;
 
-        if (isHosted) {
+        if (isHosted === true) {
             await ProjectHost.create({ URL, projectId })
         }
 
-        if (usedTools) {
+        if (usedTools === true) {
             toolsIdArray.map(async (toolId) => {
-                await ProjectTool.create({ toolId, projectId }) 
+                await ProjectTool.create({ toolId, projectId })
             })
         }
 
-        if (usedDatabase) {
+        if (usedDatabase === true) {
             await ProjectDatabase.create({ databaseId, projectId })
         }
 
@@ -243,6 +243,7 @@ const insertProject = async (req, res) => {
 
         return res.status(200).json({ message: "Projeto cadastrado com sucesso!", newProject })
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }
 }
