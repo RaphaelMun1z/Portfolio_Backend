@@ -42,7 +42,7 @@ const getAllTools = async (req, res) => {
 
     toolUsageCounts.forEach(usage => {
         const toolId = usage.toolId;
-        const count = usage.usageCount;
+        const count = usage.dataValues.usageCount;
         totalUsageMap[toolId] = count;
     });
 

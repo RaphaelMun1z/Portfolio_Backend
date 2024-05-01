@@ -64,7 +64,7 @@ const getAllFrameworks = async (req, res) => {
 
     frontendUsageCounts.forEach(usage => {
         const frameworkId = usage.frameworkId;
-        const count = usage.frontendUsageCount;
+        const count = usage.dataValues.frontendUsageCount;
         if (totalUsageMap[frameworkId]) {
             totalUsageMap[frameworkId] += count;
         } else {
@@ -74,7 +74,7 @@ const getAllFrameworks = async (req, res) => {
 
     backendUsageCounts.forEach(usage => {
         const frameworkId = usage.frameworkId;
-        const count = usage.backendUsageCount;
+        const count = usage.dataValues.backendUsageCount;
         if (totalUsageMap[frameworkId]) {
             totalUsageMap[frameworkId] += count;
         } else {

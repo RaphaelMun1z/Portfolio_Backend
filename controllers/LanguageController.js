@@ -47,7 +47,7 @@ const getAllLanguages = async (req, res) => {
 
     frontendUsageCounts.forEach(usage => {
         const languageId = usage.languageId;
-        const count = usage.frontendUsageCount;
+        const count = usage.dataValues.frontendUsageCount;
         if (totalUsageMap[languageId]) {
             totalUsageMap[languageId] += count;
         } else {
@@ -57,7 +57,7 @@ const getAllLanguages = async (req, res) => {
 
     backendUsageCounts.forEach(usage => {
         const languageId = usage.languageId;
-        const count = usage.backendUsageCount;
+        const count = usage.dataValues.backendUsageCount;
         if (totalUsageMap[languageId]) {
             totalUsageMap[languageId] += count;
         } else {

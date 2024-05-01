@@ -263,7 +263,7 @@ const insertProject = async (req, res) => {
 }
 
 const getAllProjects = async (req, res) => {
-    const { projectName, projectStack, databaseId, languagesId, frameworksId } = req.query;
+    const { projectName, projectType, projectStack, databaseId, languagesId, frameworksId } = req.query;
 
     const whereClause = {};
 
@@ -273,6 +273,10 @@ const getAllProjects = async (req, res) => {
 
     if (projectStack) {
         whereClause.stack = projectStack
+    }
+
+    if (projectType) {
+        whereClause.type = projectType
     }
 
     if (databaseId) {
