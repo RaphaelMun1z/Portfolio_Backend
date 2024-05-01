@@ -167,7 +167,7 @@ const insertProject = async (req, res) => {
         return res.status(400).json({ error: "A situação da hospedagem do projeto é obrigatória!" })
     }
 
-    if (isHosted === true) {
+    if (Boolean(isHosted) === true) {
         if (!URL || URL === "") {
             return res.status(400).json({ error: "A URL da hospedagem é obrigatória!" })
         }
@@ -178,12 +178,14 @@ const insertProject = async (req, res) => {
         return res.status(400).json({ error: "A situação do uso de ferramentas no projeto é obrigatória!" })
     }
 
-    if (usedTools === true) {
-        if (!Array.isArray(toolsIdArray) || !toolsIdArray || toolsIdArray === "") {
+    if (Boolean(usedTools) === true) {
+        if (!toolsIdArray || toolsIdArray.length === 0 || toolsIdArray === "") {
             return res.status(400).json({ error: "O identificador da(s) ferramenta(s) é obrigatório!" })
         }
 
-        toolsIdArray.map((toolId) => {
+        const toolsArray = [...toolsIdArray]
+
+        toolsArray.map((toolId) => {
             if (isNaN(toolId)) {
                 return res.status(400).json({ error: "O identificador da(s) ferramenta(s) precisa ser válido!" })
             }
@@ -195,7 +197,7 @@ const insertProject = async (req, res) => {
         return res.status(400).json({ error: "A situação do uso de banco de dados para o projeto é obrigatória!" })
     }
 
-    if (usedDatabase === true) {
+    if (Boolean(usedDatabase) === true) {
         if (!databaseId || isNaN(databaseId) || databaseId === "") {
             return res.status(400).json({ error: "O identificador do banco de dados é obrigatório!" })
         }
@@ -212,17 +214,19 @@ const insertProject = async (req, res) => {
         const newProject = await Project.create({ name, description, bannerImage, type, stack, isHosted, usedTools, usedDatabase })
         const projectId = newProject.id;
 
-        if (isHosted === true) {
+        if (Boolean(isHosted) === true) {
             await ProjectHost.create({ URL, projectId })
         }
 
-        if (usedTools === true) {
-            toolsIdArray.map(async (toolId) => {
+        if (Boolean(usedTools) === true) {
+            const toolsArray = [...toolsIdArray]
+
+            toolsArray.map(async (toolId) => {
                 await ProjectTool.create({ toolId, projectId })
             })
         }
 
-        if (usedDatabase === true) {
+        if (Boolean(usedDatabase) === true) {
             await ProjectDatabase.create({ databaseId, projectId })
         }
 
@@ -325,7 +329,7 @@ const getAllProjects = async (req, res) => {
             },
             {
                 model: ProjectFrontend,
-                attributes: ['id'],
+                attributes: ['id', 'repository'],
                 include: [{
                     model: Language,
                     attributes: ['id', 'name']
@@ -337,7 +341,7 @@ const getAllProjects = async (req, res) => {
             },
             {
                 model: ProjectBackend,
-                attributes: ['id'],
+                attributes: ['id', 'repository'],
                 include: [{
                     model: Language,
                     attributes: ['id', 'name']
@@ -391,7 +395,7 @@ const getProjectById = async (req, res) => {
         },
         {
             model: ProjectFrontend,
-            attributes: ['id'],
+            attributes: ['id', 'repository'],
             include: [{
                 model: Language,
                 attributes: ['id', 'name']
@@ -407,7 +411,7 @@ const getProjectById = async (req, res) => {
         },
         {
             model: ProjectBackend,
-            attributes: ['id'],
+            attributes: ['id', 'repository'],
             include: [{
                 model: Language,
                 attributes: ['id', 'name']
