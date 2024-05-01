@@ -40,7 +40,9 @@ const getAllDatabases = async (req, res) => {
 
     const databaseUsageMap = {};
     usageCounts.forEach(usage => {
-        databaseUsageMap[usage.databaseId] = usage.usageCount;
+        const databaseId = parseInt(usage.dataValues.databaseId);
+        const usageCount = parseInt(usage.dataValues.usageCount);
+        databaseUsageMap[databaseId] = usageCount;
     });
 
     const databasesWithUsageCount = databases.map(database => ({
