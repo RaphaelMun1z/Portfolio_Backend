@@ -167,7 +167,7 @@ const insertProject = async (req, res) => {
         return res.status(400).json({ error: "A situação da hospedagem do projeto é obrigatória!" })
     }
 
-    if (Boolean(isHosted) === true) {
+    if (isHosted === "yes") {
         if (!URL || URL === "") {
             return res.status(400).json({ error: "A URL da hospedagem é obrigatória!" })
         }
@@ -183,9 +183,13 @@ const insertProject = async (req, res) => {
             return res.status(400).json({ error: "O identificador da(s) ferramenta(s) é obrigatório!" })
         }
 
-        const toolsArray = [...toolsIdArray]
+        const toolsArray = [...toolsIdArray];
+        
+        const toolsArrayInt = toolsArray
+            .map((tool) => parseInt(tool))
+            .filter((tool) => !isNaN(tool));
 
-        toolsArray.map((toolId) => {
+        toolsArrayInt.map((toolId) => {
             if (isNaN(toolId)) {
                 return res.status(400).json({ error: "O identificador da(s) ferramenta(s) precisa ser válido!" })
             }
@@ -214,16 +218,22 @@ const insertProject = async (req, res) => {
         const newProject = await Project.create({ name, description, bannerImage, type, stack, isHosted, usedTools, usedDatabase })
         const projectId = newProject.id;
 
-        if (Boolean(isHosted) === true) {
+        if (isHosted === 'yes') {
             await ProjectHost.create({ URL, projectId })
         }
 
         if (Boolean(usedTools) === true) {
             const toolsArray = [...toolsIdArray]
 
-            toolsArray.map(async (toolId) => {
-                await ProjectTool.create({ toolId, projectId })
-            })
+            const toolsArrayInt = toolsArray
+                .map((tool) => parseInt(tool))
+                .filter((tool) => !isNaN(tool));
+
+            await Promise.all(
+                toolsArrayInt.map(async (toolId) => {
+                    await ProjectTool.create({ toolId, projectId })
+                })
+            )
         }
 
         if (Boolean(usedDatabase) === true) {

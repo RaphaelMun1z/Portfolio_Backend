@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'projectId',
         onDelete: 'CASCADE',
       });
-    } 
+    }
   }
   Project.init({
     name: DataTypes.STRING,
@@ -39,7 +39,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('Frontend', 'Backend', 'Fullstack'),
       allowNull: false
     },
-    isHosted: DataTypes.BOOLEAN,
+    isHosted: {
+      type: DataTypes.ENUM('yes', 'no', 'soon'),
+    },
     usedTools: DataTypes.BOOLEAN,
     usedDatabase: DataTypes.BOOLEAN
   }, {

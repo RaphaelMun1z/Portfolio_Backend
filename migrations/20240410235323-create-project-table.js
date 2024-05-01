@@ -33,7 +33,8 @@ module.exports = {
         allowNull: false,
       },
       isHosted: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.ENUM,
+        values: ['yes', 'no', 'soon'],
         allowNull: false,
       },
       usedTools: {
