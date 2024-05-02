@@ -2,20 +2,28 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('ProjectTools', {
+    await queryInterface.createTable('Budgets', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      toolId: {
-        allowNull: false,
-        type: Sequelize.INTEGER
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
-      projectId: {
-        allowNull: false,
-        type: Sequelize.INTEGER
+      contact: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      description: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      references: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -28,6 +36,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('ProjectTools');
+    await queryInterface.dropTable('Budgets');
   }
 };
