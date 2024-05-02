@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'SocialMedia',
+    tableName: 'Social_Media'
   });
   return SocialMedia;
 };

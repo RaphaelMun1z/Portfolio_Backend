@@ -30,6 +30,7 @@ const insertBudget = async (req, res) => {
         const newBudget = await Budget.create({ name, contact, description, references })
         return res.status(200).json({ message: "Orçamento cadastrado com sucesso!", newBudget })
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }
 }
