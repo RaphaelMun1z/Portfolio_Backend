@@ -2,7 +2,6 @@ const { ProjectImage, Project } = require('../models')
 
 const insertProjectImage = async (req, res) => {
     const { projectId } = req.body
-    return console.log(projectId)
 
     if (!projectId || projectId === "") {
         return res.status(400).json({ error: "O identificador do projeto é obrigatório!" })
