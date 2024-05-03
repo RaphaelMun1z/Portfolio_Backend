@@ -11,20 +11,16 @@ const db = {};
 
 // Fix "Please install mysql2 package manually".
 import mysql2 from 'mysql2';
-/* if (options.dialect === 'mysql') {
-  options.dialectModule = mysql2;
-}
-new Sequelize(options) */
 
 let sequelize;
 if (config.use_env_variable) {
-  if (options.dialect === 'mysql') {
-    options.dialectModule = mysql2;
+  if (config.dialect === 'mysql') {
+    config.dialectModule = mysql2;
   }
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
-  if (options.dialect === 'mysql') {
-    options.dialectModule = mysql2;
+  if (config.dialect === 'mysql') {
+    config.dialectModule = mysql2;
   }
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
