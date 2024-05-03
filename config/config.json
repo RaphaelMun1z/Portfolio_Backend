@@ -4,7 +4,7 @@
     "password": "EYuEDfKubypuRgqLcxZNLGJQXKRTpJIW",
     "database": "railway",
     "host": "viaduct.proxy.rlwy.net",
-    "dialect": "mysql",
+    "dialect": "mysql2",
     "port": "18644"
   },
   "test": {
@@ -12,7 +12,7 @@
     "password": "EYuEDfKubypuRgqLcxZNLGJQXKRTpJIW",
     "database": "railway",
     "host": "viaduct.proxy.rlwy.net",
-    "dialect": "mysql",
+    "dialect": "mysql2",
     "port": "18644"
   },
   "production": {
@@ -20,7 +20,7 @@
     "password": "EYuEDfKubypuRgqLcxZNLGJQXKRTpJIW",
     "database": "railway",
     "host": "viaduct.proxy.rlwy.net",
-    "dialect": "mysql",
+    "dialect": "mysql2",
     "port": "18644"
   }
 }
