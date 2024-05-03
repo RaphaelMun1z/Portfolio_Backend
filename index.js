@@ -16,7 +16,8 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cors({
     credentials: true,
     origin: [
-        "https://portfolio-frontend-raphael-munizs-projects.vercel.app/"
+        "https://portfolio-frontend-raphael-munizs-projects.vercel.app",
+        "https://portfolio-frontend-raphael-munizs-projects.vercel.app/login"
     ]
 }))
 
