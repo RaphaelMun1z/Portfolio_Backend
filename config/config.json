@@ -1,26 +1,26 @@
 {
   "development": {
     "username": "root",
-    "password": "EYuEDfKubypuRgqLcxZNLGJQXKRTpJIW",
+    "password": "ccnEgmUdZKCGdcERDGUsyhuppnkEcMKj",
     "database": "railway",
-    "host": "viaduct.proxy.rlwy.net",
+    "host": "roundhouse.proxy.rlwy.net",
     "dialect": "mysql",
-    "port": "18644"
+    "port": "36880"
   },
   "test": {
     "username": "root",
-    "password": "EYuEDfKubypuRgqLcxZNLGJQXKRTpJIW",
+    "password": "ccnEgmUdZKCGdcERDGUsyhuppnkEcMKj",
     "database": "railway",
-    "host": "viaduct.proxy.rlwy.net",
+    "host": "roundhouse.proxy.rlwy.net",
     "dialect": "mysql",
-    "port": "18644"
+    "port": "36880"
   },
   "production": {
     "username": "root",
-    "password": "EYuEDfKubypuRgqLcxZNLGJQXKRTpJIW",
+    "password": "ccnEgmUdZKCGdcERDGUsyhuppnkEcMKj",
     "database": "railway",
-    "host": "viaduct.proxy.rlwy.net",
+    "host": "roundhouse.proxy.rlwy.net",
     "dialect": "mysql",
-    "port": "18644"
+    "port": "36880"
   }
 }
