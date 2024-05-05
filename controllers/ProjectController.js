@@ -201,7 +201,9 @@ const insertProject = async (req, res) => {
         return res.status(400).json({ error: "A situação do uso de banco de dados para o projeto é obrigatória!" })
     }
 
-    if (Boolean(usedDatabase) === true) {
+
+    if (Boolean(usedDatabase) === "true") {
+        console.log("Teste")
         if (!databaseId || isNaN(databaseId) || databaseId === "") {
             return res.status(400).json({ error: "O identificador do banco de dados é obrigatório!" })
         }
@@ -236,7 +238,7 @@ const insertProject = async (req, res) => {
             )
         }
 
-        if (Boolean(usedDatabase) === true) {
+        if (Boolean(usedDatabase) === "true") {
             await ProjectDatabase.create({ databaseId, projectId })
         }
 
