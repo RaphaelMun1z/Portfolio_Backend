@@ -140,7 +140,7 @@ const deleteLanguage = async (req, res) => {
 
         // Delete language
         await Language.destroy({ where: { id } })
-        return res.status(200).json({ message: "Linguagem deletada com sucesso!" })
+        return res.status(200).json({ message: "Linguagem deletada com sucesso!", id: parseInt(id) })
     } catch (error) {
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }

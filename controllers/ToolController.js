@@ -121,7 +121,7 @@ const deleteTool = async (req, res) => {
 
         // Delete tool
         await Tool.destroy({ where: { id } })
-        return res.status(200).json({ message: "Ferramenta deletada com sucesso!" })
+        return res.status(200).json({ message: "Ferramenta deletada com sucesso!", id: parseInt(id) })
     } catch (error) {
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }

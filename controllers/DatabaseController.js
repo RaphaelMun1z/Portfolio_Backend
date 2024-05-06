@@ -120,7 +120,7 @@ const deleteDatabase = async (req, res) => {
 
         // Delete database
         await Database.destroy({ where: { id } })
-        return res.status(200).json({ message: "Banco de dados deletado com sucesso!" })
+        return res.status(200).json({ message: "Banco de dados deletado com sucesso!", id: parseInt(id) })
     } catch (error) {
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }

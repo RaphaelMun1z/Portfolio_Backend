@@ -1,4 +1,5 @@
 const {
+    sequelize,
     Project,
     ProjectHost,
     ProjectTool,
@@ -178,13 +179,13 @@ const insertProject = async (req, res) => {
         return res.status(400).json({ error: "A situação do uso de ferramentas no projeto é obrigatória!" })
     }
 
-    if (Boolean(usedTools) === true) {
+    if (usedTools === "true") {
         if (!toolsIdArray || toolsIdArray.length === 0 || toolsIdArray === "") {
             return res.status(400).json({ error: "O identificador da(s) ferramenta(s) é obrigatório!" })
         }
 
         const toolsArray = [...toolsIdArray];
-        
+
         const toolsArrayInt = toolsArray
             .map((tool) => parseInt(tool))
             .filter((tool) => !isNaN(tool));
@@ -202,7 +203,7 @@ const insertProject = async (req, res) => {
     }
 
 
-    if (Boolean(usedDatabase) === "true") {
+    if (usedDatabase === "true") {
         console.log("Teste")
         if (!databaseId || isNaN(databaseId) || databaseId === "") {
             return res.status(400).json({ error: "O identificador do banco de dados é obrigatório!" })
@@ -216,48 +217,59 @@ const insertProject = async (req, res) => {
             return res.status(409).json({ error: "Já existe um projeto com esse nome!" })
         }
 
-        // Create project
-        const newProject = await Project.create({ name, description, bannerImage, type, stack, isHosted, usedTools, usedDatabase })
-        const projectId = newProject.id;
+        // Iniciar transação
+        await sequelize.transaction({ autocommit: false }).then(async (t) => {
 
-        if (isHosted === 'yes') {
-            await ProjectHost.create({ URL, projectId })
-        }
+            // Create project
+            const newProject = await Project.create({ name, description, bannerImage, type, stack, isHosted, usedTools, usedDatabase })
+            const projectId = newProject.id;
 
-        if (Boolean(usedTools) === true) {
-            const toolsArray = [...toolsIdArray]
+            // If is hosted create the project host
+            if (isHosted === 'yes') {
+                await ProjectHost.create({ URL, projectId })
+            }
 
-            const toolsArrayInt = toolsArray
-                .map((tool) => parseInt(tool))
-                .filter((tool) => !isNaN(tool));
+            // If the project has tools, map and register as project tool
+            if (usedTools === "true") {
+                const toolsArray = [...toolsIdArray]
 
-            await Promise.all(
-                toolsArrayInt.map(async (toolId) => {
-                    await ProjectTool.create({ toolId, projectId })
-                })
-            )
-        }
+                const toolsArrayInt = toolsArray
+                    .map((tool) => parseInt(tool))
+                    .filter((tool) => !isNaN(tool));
 
-        if (Boolean(usedDatabase) === "true") {
-            await ProjectDatabase.create({ databaseId, projectId })
-        }
+                await Promise.all(
+                    toolsArrayInt.map(async (toolId) => {
+                        await ProjectTool.create({ toolId, projectId })
+                    })
+                )
+            }
 
-        switch (stack) {
-            case "Frontend":
-                await ProjectFrontend.create({ languageId: frontend.languageId, frameworkId: frontend.frameworkId, repository: frontend.repository, projectId: newProject.id })
-                break;
-            case "Backend":
-                await ProjectBackend.create({ languageId: backend.languageId, frameworkId: backend.frameworkId, repository: backend.repository, projectId: newProject.id })
-                break;
-            case "Fullstack":
-                await ProjectFrontend.create({ languageId: frontend.languageId, frameworkId: frontend.frameworkId, repository: frontend.repository, projectId: newProject.id })
-                await ProjectBackend.create({ languageId: backend.languageId, frameworkId: backend.frameworkId, repository: backend.repository, projectId: newProject.id })
-                break;
-            default:
-                break;
-        }
+            // If the project has database, create project database
+            if (usedDatabase === "true") {
+                await ProjectDatabase.create({ databaseId, projectId })
+            }
 
-        return res.status(200).json({ message: "Projeto cadastrado com sucesso!", newProject })
+            // Verify the selected stack and create the Frontend and/or Backend
+            switch (stack) {
+                case "Frontend":
+                    await ProjectFrontend.create({ languageId: frontend.languageId, frameworkId: frontend.frameworkId, repository: frontend.repository, projectId: newProject.id })
+                    break;
+                case "Backend":
+                    await ProjectBackend.create({ languageId: backend.languageId, frameworkId: backend.frameworkId, repository: backend.repository, projectId: newProject.id })
+                    break;
+                case "Fullstack":
+                    await ProjectFrontend.create({ languageId: frontend.languageId, frameworkId: frontend.frameworkId, repository: frontend.repository, projectId: newProject.id })
+                    await ProjectBackend.create({ languageId: backend.languageId, frameworkId: backend.frameworkId, repository: backend.repository, projectId: newProject.id })
+                    break;
+                default:
+                    break;
+            }
+
+            // Commit da transação
+            await t.commit();
+
+            return res.status(200).json({ message: "Projeto cadastrado com sucesso!", newProject })
+        })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
@@ -515,7 +527,7 @@ const deleteProject = async (req, res) => {
 
         // Delete project
         await Project.destroy({ where: { id } })
-        return res.status(200).json({ message: "Projeto deletado com sucesso!" })
+        return res.status(200).json({ message: "Projeto deletado com sucesso!", id: parseInt(id) })
     } catch (error) {
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }
