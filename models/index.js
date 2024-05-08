@@ -9,7 +9,6 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config')[env];
 const db = {};
 
-// Fix "Please install mysql2 package manually".
 import mysql2 from 'mysql2';
 
 let sequelize;
