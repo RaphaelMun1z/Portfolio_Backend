@@ -31,9 +31,22 @@ const insertProjectImage = async (req, res) => {
 const getProjectImagesById = async (req, res) => {
     const { id } = req.params
 
-    const projectImage = await ProjectImage.findAll({ where: { projectId: id } })
+    const projectId = id
 
-    res.status(200).json(projectImage)
+    // Verify if project Image ID was passed
+    if (isNaN(parseInt(projectId))) {
+        return res.status(400).json({ error: "O identificador da imagem do projeto é obrigatório!" })
+    }
+
+    const projectImages = await ProjectImage.findAll({
+        where: { projectId: parseInt(projectId) },
+        include: [{
+            model: Project,
+            attributes: ['id', 'name']
+        }]
+    })
+
+    res.status(200).json(projectImages)
 }
 
 const deleteProjectImage = async (req, res) => {
@@ -53,7 +66,7 @@ const deleteProjectImage = async (req, res) => {
 
         // Delete project Image
         await ProjectImage.destroy({ where: { id } })
-        return res.status(200).json({ message: "Imagem deletada com sucesso!" })
+        return res.status(200).json({ message: "Imagem deletada com sucesso!", id: parseInt(id) })
     } catch (error) {
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }
