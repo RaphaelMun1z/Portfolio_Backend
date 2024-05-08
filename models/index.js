@@ -10,17 +10,17 @@ const config = require(__dirname + '/../config/config')[env];
 const db = {};
 
 // Fix "Please install mysql2 package manually".
-//import mysql2 from 'mysql2';
+import mysql2 from 'mysql2';
 
 let sequelize;
 if (config.use_env_variable) {
   if (config.dialect === 'mysql') {
-    //config.dialectModule = mysql2;
+    config.dialectModule = mysql2;
   }
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
   if (config.dialect === 'mysql') {
-    //config.dialectModule = mysql2;
+    config.dialectModule = mysql2;
   }
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
