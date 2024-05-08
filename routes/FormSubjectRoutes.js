@@ -9,6 +9,7 @@ const {
     insertFormSubject,
     getAllFormSubjects,
     getFormSubjectById,
+    getFormSubjectByFormType,
     updateFormSubject,
     deleteFormSubject,
 } = require("../controllers/FormSubjectController")
@@ -16,6 +17,7 @@ const {
 // Routes
 router.post("/", verifyToken, insertFormSubject)
 router.get("/", getAllFormSubjects)
+router.get("/form-type/:type", getFormSubjectByFormType)
 router.get("/:id", getFormSubjectById)
 router.put("/:id", verifyToken, updateFormSubject)
 router.delete("/:id", verifyToken, deleteFormSubject)

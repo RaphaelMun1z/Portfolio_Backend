@@ -11,14 +11,8 @@ const insertFormSubject = async (req, res) => {
         return res.status(400).json({ error: "O tipo de formulário é obrigatório!" })
     }
 
-    switch (formType) {
-        case "Doubt":
-            break;
-        case "Budget":
-            break;
-        default:
-            return res.status(400).json({ error: "Valor inválido para o tipo de formulário!" })
-            break;
+    if (formType !== "Doubt" && formType !== "Report") {
+        return res.status(400).json({ error: "Valor inválido para o tipo de formulário!" })
     }
 
     try {
@@ -48,6 +42,14 @@ const getFormSubjectById = async (req, res) => {
     const formSubject = await FormSubject.findByPk(id)
 
     res.status(200).json(formSubject)
+}
+
+const getFormSubjectByFormType = async (req, res) => {
+    const { type } = req.params
+
+    const formSubjects = await FormSubject.findAll({ where: { formType: type } })
+
+    res.status(200).json(formSubjects)
 }
 
 const updateFormSubject = async (req, res) => {
@@ -113,6 +115,7 @@ module.exports = {
     insertFormSubject,
     getAllFormSubjects,
     getFormSubjectById,
+    getFormSubjectByFormType,
     updateFormSubject,
     deleteFormSubject,
 }

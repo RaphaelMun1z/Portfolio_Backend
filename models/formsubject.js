@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   FormSubject.init({
     subject: DataTypes.STRING,
     formType: {
-      type: DataTypes.ENUM('Report', 'Doubt', 'Budget'),
+      type: DataTypes.ENUM('Report', 'Doubt'),
       allowNull: false
     },
   }, {

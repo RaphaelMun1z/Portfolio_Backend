@@ -15,7 +15,7 @@ module.exports = {
       },
       formType: {
         type: Sequelize.ENUM,
-        values: ['Doubt', 'Budget'],
+        values: ['Doubt', 'Report'],
         allowNull: false,
       },
       createdAt: {
