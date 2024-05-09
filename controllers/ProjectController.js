@@ -279,25 +279,28 @@ const insertProject = async (req, res) => {
 const getAllProjects = async (req, res) => {
     const { projectName, projectType, projectStack, databaseId, languagesId, frameworksId } = req.query;
 
+    const filterClauses = []
     const whereClause = {};
 
+    // Filter bt project name
     if (projectName) {
-        whereClause.name = { [Op.like]: `%${projectName}%` };
+        filterClauses.push({ name: { [Op.like]: `%${projectName}%` } });
     }
 
+    // Filter by project stack
     if (projectStack) {
-        whereClause.stack = projectStack
+        filterClauses.push({ stack: projectStack });
     }
 
+    // Filter by project type
     if (projectType) {
-        whereClause.type = projectType
+        filterClauses.push({ type: projectType });
     }
 
+    // Filter by project database
     if (databaseId) {
-        whereClause['$ProjectDatabase.Database.id$'] = { [Op.eq]: databaseId };
+        filterClauses.push({ '$ProjectDatabase.Database.id$': { [Op.eq]: databaseId } });
     }
-
-    const filterClauses = []
 
     if (languagesId && languagesId.length > 0) {
         const languagesIdArray = languagesId.split(',').map(id => parseInt(id.trim(), 10));
@@ -331,7 +334,7 @@ const getAllProjects = async (req, res) => {
 
     try {
         const projects = await Project.findAll({
-            where: Object.keys(whereClause).length > 0 ? whereClause : null,
+            where: Object.getOwnPropertySymbols(whereClause).length !== 0 ? whereClause : {},
             include: [{
                 model: ProjectHost,
                 attributes: ['id', 'URL'],
