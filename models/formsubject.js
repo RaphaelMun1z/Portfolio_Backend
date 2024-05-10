@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE',
       });
     }
-  }
+  } 
   FormSubject.init({
     subject: DataTypes.STRING,
     formType: {
