@@ -33,44 +33,60 @@ const insertLanguage = async (req, res) => {
 const getAllLanguages = async (req, res) => {
     const languages = await Language.findAll()
 
-    const frontendUsageCounts = await ProjectFrontend.findAll({
-        attributes: ['languageId', [sequelize.fn('COUNT', 'languageId'), 'frontendUsageCount']],
-        group: ['languageId']
+    const frontendUsage = await ProjectFrontend.findAll({
+        attributes: ['languageId', 'projectId'],
     });
 
-    const backendUsageCounts = await ProjectBackend.findAll({
-        attributes: ['languageId', [sequelize.fn('COUNT', 'languageId'), 'backendUsageCount']],
-        group: ['languageId']
+    const backendUsage = await ProjectBackend.findAll({
+        attributes: ['languageId', 'projectId'],
     });
 
-    const totalUsageMap = {};
-
-    frontendUsageCounts.forEach(usage => {
-        const languageId = usage.languageId;
-        const count = usage.dataValues.frontendUsageCount;
-        if (totalUsageMap[languageId]) {
-            totalUsageMap[languageId] += count;
-        } else {
-            totalUsageMap[languageId] = count;
-        }
-    });
-
-    backendUsageCounts.forEach(usage => {
-        const languageId = usage.languageId;
-        const count = usage.dataValues.backendUsageCount;
-        if (totalUsageMap[languageId]) {
-            totalUsageMap[languageId] += count;
-        } else {
-            totalUsageMap[languageId] = count;
-        }
-    });
-
-    const languagesWithTotalUsageCount = languages.map(language => ({
-        ...language.toJSON(),
-        usageCount: totalUsageMap[language.id] || 0,
+    const projectsFrontendArray = frontendUsage.map((frontProject) => ({
+        [frontProject.projectId]: frontProject.languageId
     }));
 
-    res.status(200).json(languagesWithTotalUsageCount)
+    const projectsBackendArray = backendUsage.map((backProject) => ({
+        [backProject.projectId]: backProject.languageId,
+    }));
+
+    let array = [...projectsBackendArray, ...projectsFrontendArray]
+
+    const result = array.filter((objeto, indice, self) =>
+        indice === self.findIndex((t) => (
+            JSON.stringify(t) === JSON.stringify(objeto)
+        ))
+    );
+
+    result.sort((a, b) => {
+        const aKey = Object.keys(a)[0];
+        const bKey = Object.keys(b)[0];
+        return aKey.localeCompare(bKey);
+    });
+
+    const countMap = {};
+
+    result.forEach(objeto => {
+        const chave = Object.keys(objeto)[0];
+        const valor = Object.values(objeto)[0];
+        if (countMap[valor]) {
+            countMap[valor] += 1;
+        } else {
+            countMap[valor] = 1;
+        }
+    });
+
+    const usage = Object.entries(countMap).map(([chave, valor]) => ({ [chave]: valor }));
+
+    const languagesWithUsage = languages.map(language => {
+        const usageObj = usage.find(u => Object.keys(u)[0] === String(language.id));
+        const usageValue = usageObj ? Object.values(usageObj)[0] : 0;
+        return {
+            ...language.toJSON(),
+            usageCount: usageValue
+        };
+    });
+
+    res.status(200).json(languagesWithUsage)
 }
 
 const getLanguageById = async (req, res) => {
