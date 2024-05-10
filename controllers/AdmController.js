@@ -140,7 +140,10 @@ const updateAdm = async (req, res) => {
         }
 
         if (password) {
-            admExists.password = password
+            const salt = await bcrypt.genSalt(12)
+            const passwordHash = await bcrypt.hash(password, salt)
+
+            admExists.password = passwordHash
         }
 
         // Update adm
