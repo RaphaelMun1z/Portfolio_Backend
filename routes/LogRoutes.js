@@ -9,11 +9,13 @@ const {
     insertLog,
     getAllLogs,
     getLogById,
+    resetLogs,
 } = require("../controllers/LogController")
 
 // Routes
 router.post("/", insertLog)
 router.get("/", verifyToken, getAllLogs)
 router.get("/:id", verifyToken, getLogById)
+router.delete("/", verifyToken, resetLogs)
 
 module.exports = router

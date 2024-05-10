@@ -30,8 +30,15 @@ const getLogById = async (req, res) => {
     res.status(200).json(log)
 }
 
+const resetLogs = async (req, res) => {
+    await Log.destroy({ where: { type: 'Access' } })
+
+    return res.status(200).json({ message: "Log's de acesso resetada com sucesso!" })
+}
+
 module.exports = {
     insertLog,
     getAllLogs,
     getLogById,
+    resetLogs,
 }

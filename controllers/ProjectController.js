@@ -68,11 +68,14 @@ const insertProject = async (req, res) => {
                 return res.status(422).json({ error: "Essa linguagem não existe!" })
             }
 
-            // Verify if framework already exists
-            const frontendFrameworkExists = await Framework.findByPk(frontend.frameworkId)
-            if (!frontendFrameworkExists) {
-                return res.status(409).json({ error: "Esse framework não existe!" })
+            if (frontend.frameworkId !== '0') {
+                // Verify if framework already exists
+                const frontendFrameworkExists = await Framework.findByPk(frontend.frameworkId)
+                if (!frontendFrameworkExists) {
+                    return res.status(409).json({ error: "Esse framework não existe!" })
+                }
             }
+
             break;
 
         case "Backend":
@@ -80,8 +83,10 @@ const insertProject = async (req, res) => {
                 return res.status(400).json({ error: "O identificador da linguagem utilizada no backend é obrigatório!" })
             }
 
-            if (!backend.frameworkId || isNaN(backend.frameworkId) || backend.frameworkId === "") {
-                return res.status(400).json({ error: "O identificador do framework utilizado no backend é obrigatório!" })
+            if (backend.frameworkId !== '0') {
+                if (!backend.frameworkId || isNaN(backend.frameworkId) || backend.frameworkId === "") {
+                    return res.status(400).json({ error: "O identificador do framework utilizado no backend é obrigatório!" })
+                }
             }
 
             if (!backend.repository || backend.repository === "") {
@@ -132,23 +137,28 @@ const insertProject = async (req, res) => {
                 return res.status(422).json({ error: "Essa linguagem não existe!" })
             }
 
-            // Verify if framework already exists
-            const fullstack_frontendFrameworkExists = await Framework.findByPk(frontend.frameworkId)
-            if (!fullstack_frontendFrameworkExists) {
-                return res.status(409).json({ error: "Esse framework não existe!" })
+            if (frontend.frameworkId !== '0') {
+                // Verify if framework already exists
+                const fullstack_frontendFrameworkExists = await Framework.findByPk(frontend.frameworkId)
+                if (!fullstack_frontendFrameworkExists) {
+                    return res.status(409).json({ error: "Esse framework não existe 1!" })
+                }
             }
 
             // Verify if language exists
             const fullstack_backendLanguageExists = await Language.findByPk(backend.languageId)
             if (!fullstack_backendLanguageExists) {
-                return res.status(422).json({ error: "Essa linguagem não existe!" })
+                return res.status(422).json({ error: "Essa linguagem não existe! 2" })
             }
 
-            // Verify if framework already exists
-            const fullstack_backendFrameworkExists = await Framework.findByPk(backend.frameworkId)
-            if (!fullstack_backendFrameworkExists) {
-                return res.status(409).json({ error: "Esse framework não existe!" })
+            if (backend.frameworkId !== '0') {
+                // Verify if framework already exists
+                const fullstack_backendFrameworkExists = await Framework.findByPk(backend.frameworkId)
+                if (!fullstack_backendFrameworkExists) {
+                    return res.status(409).json({ error: "Esse framework não existe!" })
+                }
             }
+
             break;
         default:
             return res.status(400).json({ error: "Valor inválido para a stack!" })
