@@ -26,6 +26,7 @@ const insertFormSubject = async (req, res) => {
         const newFormSubject = await FormSubject.create({ subject, formType })
         return res.status(200).json({ message: "Assunto cadastrado com sucesso!", newFormSubject })
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ error: "Erro interno do servidor. Por favor, tente novamente mais tarde." })
     }
 }
