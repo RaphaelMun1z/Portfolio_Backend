@@ -18,7 +18,7 @@ app.use(cors({
     origin: [
         "https://portfolio-frontend-phi-one.vercel.app",
         "https://portfolio-frontend-phi-one.vercel.app/",
-        "https://portfolio-frontend-phi-one.vercel.app/login",
+        "https://portfolio-frontend-phi-one.vercel.app/login"
         //"http://localhost:5173"
     ]
 }))
