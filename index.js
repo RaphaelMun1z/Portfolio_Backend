@@ -16,7 +16,9 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cors({
     credentials: true,
     origin: [
+        "https://portfolioraphaelmuniz.tech",
         "https://portfolioraphaelmuniz.tech/",
+        "https://portfolioraphaelmuniz.tech/login"
         //"http://localhost:5173"
     ]
 }))
