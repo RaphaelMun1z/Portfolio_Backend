@@ -16,12 +16,18 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cors({
     credentials: true,
     origin: [
-        "https://portfolioraphaelmuniz.tech",
-        "https://portfolioraphaelmuniz.tech/",
-        "https://portfolioraphaelmuniz.tech/login"
+        "https://portfolioraphaelmuniz.tech"
         //"http://localhost:5173"
     ]
 }))
+
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "https://portfolioraphaelmuniz.tech");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    next();
+});
 
 // Upload directory
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")))
