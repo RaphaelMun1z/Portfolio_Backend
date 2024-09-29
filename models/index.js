@@ -9,7 +9,7 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config')[env];
 const db = {};
 
-//import mysql2 from 'mysql2';
+import mysql2 from 'mysql2';
 
 let sequelize;
 if (config.use_env_variable) {
@@ -22,9 +22,9 @@ if (config.use_env_variable) {
       }
     }
   });
-  //config.dialectModule = mysql2;
+  config.dialectModule = mysql2;
 } else {
-  //config.dialectModule = mysql2;
+  config.dialectModule = mysql2;
   sequelize = new Sequelize(config.database, config.username, config.password, {
     ...config,
     dialectOptions: {
