@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 });
 
 // Upload directory
-app.use("/uploads", express.static(path.join(__dirname, "/uploads")))
+app.use("/uploads", cors(), express.static(path.join(__dirname, "/uploads")));
 
 // Routes
 const router = require("./routes/Router.js")
